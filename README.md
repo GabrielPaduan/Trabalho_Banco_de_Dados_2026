@@ -6,6 +6,8 @@ Este projeto consiste no desenvolvimento de um middleware sobre um Sistema Geren
 
 O objetivo principal é a aplicação prática de conceitos de bancos de dados, arquitetura de software em camadas e integração de aplicações web, seguindo rigorosas boas práticas de desenvolvimento.
 
+
+
 🎯 Objetivos
 Implementar a integração de bancos de dados em aplicações web multicamadas.
 
@@ -14,6 +16,8 @@ Praticar o desenvolvimento de sistemas sem o uso de abstrações de alto nível 
 Explorar recursos avançados da linguagem SQL para geração de relatórios e estatísticas.
 
 Garantir a integridade e linhagem dos dados em um ambiente versionado.
+
+
 
 🚀 Funcionalidades
 Gerenciamento de Datasets e Usuários
@@ -49,6 +53,8 @@ Histórico temporal de acessos e downloads.
 
 Estatísticas de uso por dataset específico.
 
+
+
 🛠️ Tecnologias e Restrições
 Para atender aos requisitos pedagógicos, o projeto segue as seguintes especificações:
 
@@ -62,6 +68,8 @@ Arquitetura: Padrão em camadas utilizando Controllers, Models e Data Access Obj
 
 Restrição de Framework: É proibido o uso de implementações JPA (como Hibernate). Toda a comunicação com o banco deve ser feita via JDBC ou similar, focando na escrita manual de SQL.
 
+
+
 📊 Requisitos de Banco de Dados
 Os relatórios do sistema exploram profundamente a linguagem SQL, utilizando:
 
@@ -72,6 +80,8 @@ Agregações e Agrupamentos (GROUP BY, COUNT, SUM, etc.).
 Subconsultas e Filtros Avançados.
 
 Funções de Ranking e Ordenação.
+
+
 
 👥 Desenvolvimento e Avaliação
 O projeto é desenvolvido em conformidade com as seguintes diretrizes:
@@ -88,17 +98,5 @@ Java JDK 11+
 Servidor de Aplicação (Tomcat/Glassfish)
 
 Banco de Dados PostgreSQL/MySQL
-
-Configuração:
-
-Clone o repositório.
-
-Configure o arquivo de conexão com o banco em src/main/resources/...
-
-Execução:
-
-Compile o projeto usando [Maven/Ant].
-
-Inicie o servidor e acesse localhost:8080.
 
 Curso de Ciência da Computação – Universidade Estadual de Londrina (UEL)
