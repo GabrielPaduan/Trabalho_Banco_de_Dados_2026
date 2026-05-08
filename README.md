@@ -1,102 +1,84 @@
-# Trabalho_Banco_de_Dados_2026
-Repositório dedicado ao trabalho de Banco de dados I do 5º semestre do curso de Ciências da Computação na UEL. Resumo: A proposta de trabalho é desenvolver um sistema que permita salvar e recuperar datasets de features e apresente relatórios e gráficos com consultas sobre esses datasets.
+# 📊 Middleware de Feature Store
 
-Middleware de Feature Store
-Este projeto consiste no desenvolvimento de um middleware sobre um Sistema Gerenciador de Banco de Dados (SGBD) relacional que implementa funcionalidades essenciais de uma Feature Store. O sistema é voltado para o gerenciamento, versionamento e análise de datasets de features utilizados em tarefas de Machine Learning.
+> **Repositório dedicado ao trabalho da disciplina de Banco de Dados I**
+> 5º semestre – Ciência da Computação | Universidade Estadual de Londrina (UEL)
 
-O objetivo principal é a aplicação prática de conceitos de bancos de dados, arquitetura de software em camadas e integração de aplicações web, seguindo rigorosas boas práticas de desenvolvimento.
+## 📖 Visão Geral
 
+Este projeto consiste no desenvolvimento de um *middleware* sobre um Sistema Gerenciador de Banco de Dados (SGBD) relacional, implementando as funcionalidades essenciais de uma **Feature Store**. 
 
+O sistema atua como um repositório centralizado voltado para o gerenciamento, versionamento e análise de *datasets* de *features* utilizados no treinamento de modelos de *Machine Learning*. O objetivo central é a aplicação prática de modelagem de dados, arquitetura de software em camadas e integração de aplicações web, seguindo rigorosas boas práticas de engenharia de software.
 
-🎯 Objetivos
-Implementar a integração de bancos de dados em aplicações web multicamadas.
+---
 
-Praticar o desenvolvimento de sistemas sem o uso de abstrações de alto nível para persistência (sem JPA/Hibernate).
+## 🎯 Objetivos de Aprendizado
 
-Explorar recursos avançados da linguagem SQL para geração de relatórios e estatísticas.
+*   **Integração:** Conectar de forma eficiente bancos de dados relacionais em aplicações web multicamadas.
+*   **Persistência Nativa:** Praticar o desenvolvimento de sistemas sem abstrações de alto nível (ausência total de JPA/Hibernate).
+*   **Domínio de SQL:** Explorar recursos e operadores avançados da linguagem SQL para a geração de métricas e relatórios gerenciais.
+*   **Governança de Dados:** Garantir a integridade, o rastreamento e a linhagem (*Data Lineage*) em um ambiente versionado.
 
-Garantir a integridade e linhagem dos dados em um ambiente versionado.
+---
 
+## 🚀 Escopo Funcional
 
+As funcionalidades do sistema estão divididas nos seguintes módulos centrais:
 
-🚀 Funcionalidades
-Gerenciamento de Datasets e Usuários
-Cadastro e autenticação de usuários.
+### 👤 1. Gestão de Acesso e Autenticação
+*   Cadastro de novos usuários no sistema.
+*   Autenticação segura mediante credenciais validadas.
+*   Registro automático de autoria e carimbo de tempo (*timestamp*) atrelado às ações dos usuários logados.
 
-Submissão de datasets em formato CSV.
+### 📁 2. Gerenciamento de Datasets (CRUD)
+*   Submissão e inserção de novos *datasets* base em formato `.csv`.
+*   Registro detalhado de metadados: descrição do projeto, fontes de origem dos dados e descrição individual e opcional de cada *feature*.
+*   Listagem em catálogo de todos os *datasets* disponíveis.
+*   Exclusão de *datasets* (gerenciando a integridade referencial).
 
-Registro detalhado de metadados: descrição, fontes de dados e descrição de cada feature.
+### 🌳 3. Versionamento e Linhagem (Data Lineage)
+*   Suporte à criação de novas versões derivadas de um *dataset* original (após tratamento e preparação dos dados).
+*   Controle de versões estruturado: cada nova entrada registra obrigatoriamente a sua "versão base".
+*   Registro histórico de transformações (descrição completa sobre inclusão, remoção ou modificação de *features*).
+*   Visualização da árvore de linhagem do *dataset* selecionado.
+*   Possibilidade de *download* do arquivo CSV de qualquer versão histórica.
 
-Registro automático de autoria e carimbo de tempo (timestamp) de inclusão.
+### 📈 4. Monitoramento e Analytics
+*   Registro silencioso de data, hora e usuário para todos os *downloads* e acessos realizados.
+*   **Dashboard Estatístico:** Geração de relatórios visuais (gráficos e tabelas) baseados no comportamento do sistema, incluindo:
+    *   Métricas globais (total de *datasets* e de versões armazenadas).
+    *   Rankings de popularidade (arquivos mais visualizados ou baixados).
+    *   Histórico temporal de acessos e *downloads*.
+    *   Estatísticas isoladas de uso por *dataset* específico.
 
-Versionamento e Linhagem (Data Lineage)
-Suporte a modificações de datasets (tratamento e preparação de dados).
+---
 
-Controle de versões similar ao Git: cada nova versão registra sua "versão base".
+## 🛠️ Tecnologias e Restrições Arquiteturais
 
-Histórico de transformações: registro de inclusão, remoção ou transformação de features.
+Para atender aos requisitos pedagógicos da disciplina, a arquitetura obedece às seguintes especificações:
 
-Download de qualquer versão histórica do dataset.
+*   **Back-end:** Java / J2EE.
+*   **Front-end:** JavaScript (Sugestão: React) ou JSP/XHTML.
+*   **Persistência:** SGBD Relacional com esquema de dados estritamente normalizado (Sugestão: PostgreSQL ou MySQL).
+*   **Arquitetura:** Padrão estrutural em camadas (*Controllers*, *Models* e *Data Access Objects - DAO*).
 
-Relatórios e Análises
-Listagem completa de datasets disponíveis.
+---
 
-Visualização detalhada de metadados e árvore de linhagem.
+## 📊 Requisitos de Complexidade em SQL
 
-Dashboard Estatístico: Gráficos e tabelas baseados em consultas SQL complexas, incluindo:
+Os módulos de relatórios e *dashboards* foram projetados para explorar profundamente a linguagem SQL. O sistema deve fazer uso obrigatório e variado de:
 
-Total de datasets e versões.
+*   **Junções:** Consultas envolvendo *Internal Joins* e *External Joins*.
+*   **Agrupamentos e Agregações:** Uso de `GROUP BY` integrado com funções como `COUNT`, `SUM`, `AVG`, etc.
+*   **Aninhamentos:** Aplicação de subconsultas (subqueries) e filtros complexos condicionados.
+*   **Ordenação Avançada:** Utilização de funções de *Ranking* e estruturações temporais.
 
-Rankings de datasets mais visualizados ou baixados.
+---
 
-Histórico temporal de acessos e downloads.
+## ⚙️ Configuração e Execução (Em Breve)
 
-Estatísticas de uso por dataset específico.
+*Esta seção será populada com os scripts de inicialização, criação do banco de dados e comandos de execução dos servidores assim que a estrutura base do código for implementada.*
 
-
-
-🛠️ Tecnologias e Restrições
-Para atender aos requisitos pedagógicos, o projeto segue as seguintes especificações:
-
-Back-end: Java / J2EE.
-
-Front-end: JavaScript (Sugestão: React) ou JSP/XHTML.
-
-Persistência: SGBD Relacional com dados normalizados.
-
-Arquitetura: Padrão em camadas utilizando Controllers, Models e Data Access Objects (DAO).
-
-Restrição de Framework: É proibido o uso de implementações JPA (como Hibernate). Toda a comunicação com o banco deve ser feita via JDBC ou similar, focando na escrita manual de SQL.
-
-
-
-📊 Requisitos de Banco de Dados
-Os relatórios do sistema exploram profundamente a linguagem SQL, utilizando:
-
-Junções (Internal e External Joins).
-
-Agregações e Agrupamentos (GROUP BY, COUNT, SUM, etc.).
-
-Subconsultas e Filtros Avançados.
-
-Funções de Ranking e Ordenação.
-
-
-
-👥 Desenvolvimento e Avaliação
-O projeto é desenvolvido em conformidade com as seguintes diretrizes:
-
-Trabalho em Grupo: Máximo de 2 alunos.
-
-Versionamento: O histórico de commits no Git é parte fundamental da avaliação, demonstrando a evolução constante e o equilíbrio de contribuições entre os membros do grupo.
-
-Como executar o projeto (Exemplo de Placeholder)
-Pré-requisitos:
-
-Java JDK 11+
-
-Servidor de Aplicação (Tomcat/Glassfish)
-
-Banco de Dados PostgreSQL/MySQL
-
-Curso de Ciência da Computação – Universidade Estadual de Londrina (UEL)
+**Pré-requisitos básicos esperados:**
+*   Java JDK 11+
+*   Servidor de Aplicação (Tomcat/Glassfish)
+*   SGBD (PostgreSQL/MySQL) ativo localmente
