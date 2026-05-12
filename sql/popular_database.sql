@@ -9,4 +9,4 @@ INSERT INTO feature_store.versao (arquivo_path, numero_versao, data_inclusao, id
 
 INSERT INTO feature_store.feature (nome, tipo_dado, descricao, id_versao) VALUES ('quantidade_alunos', 'INT', 'Total de pessoas no dia', 2), ('data_acesso', 'DATE', 'Data de registro da catraca', 2);
 
-INSERT INTO feature_store.log_acesso (tipo_operacao, data_hora, cpf_usuario, id_dataset) VALUES (1, CURRENT_TIMESTAMP, 12345678910, 1), (0, CURRENT_TIMESTAMP, 98765432101, 1);
+INSERT INTO feature_store.log_acesso (tipo_operacao, data_hora, cpf_usuario, id_dataset) VALUES (1, CURRENT_TIMESTAMP, '12345678910', 1), (0, CURRENT_TIMESTAMP, '98765432101', 1);
