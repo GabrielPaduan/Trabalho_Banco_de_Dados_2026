@@ -21,7 +21,7 @@ CREATE TABLE feature_store.usuario (
 	cpf CHAR(11) NOT NULL,
 	nome VARCHAR(100) NOT NULL,
 	email VARCHAR(255) NOT NULL,
-	senha VARCHAR(255) NOT NULL,
+	senha_hash VARCHAR(255) NOT NULL,
 	data_criacao DATE NOT NULL,
 	CONSTRAINT pk_usuario PRIMARY KEY (cpf)
 );
