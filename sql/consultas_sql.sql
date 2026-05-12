@@ -7,4 +7,4 @@ LEFT JOIN feature_store.versao v_base ON v_filha.id_versao_base = v_base.id;
 
 SELECT d.nome AS dataset, d.descricao, u.nome AS criador
 FROM feature_store.dataset d
-JOIN feature_store.usuario u ON d.cpf_usuario = u.cpf
+JOIN feature_store.usuario u ON d.cpf_usuario = u.cpf;
