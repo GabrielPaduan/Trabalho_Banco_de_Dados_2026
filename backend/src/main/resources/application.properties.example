@@ -1,0 +1,7 @@
+# Arquivo de exemplo, renomeie esse arquivo para application.properties e preencha as 
+# informações do seu banco nos campos indicados abaixo!
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/feature_store
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=org.postgresql.Driver
