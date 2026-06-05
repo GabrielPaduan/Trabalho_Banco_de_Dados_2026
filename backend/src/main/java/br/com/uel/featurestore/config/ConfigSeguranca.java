@@ -28,10 +28,10 @@ public class ConfigSeguranca {
             // Configuração de acesso pelas rotas
             .authorizeHttpRequests(auth -> auth
                 // Verifica a paridade da requisição com a rota descrita, permitindo o acesso
-                .requestMatchers(HttpMethod.POST, "/api/usuario/cadastrar").permitAll()
+                // .requestMatchers(HttpMethod.POST, "/api/usuario/cadastrar").permitAll()
                 
                 // Qualquer outra rota posterior será acessada apenas a partir do login
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             );
 
         return http.build();
