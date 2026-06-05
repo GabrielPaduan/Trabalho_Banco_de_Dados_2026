@@ -68,7 +68,6 @@ public class UsuarioDAO {
     }
 
     public void redefinirSenhaBanco(String email, String senha) {
-        System.out.print(senha);
         String sqlQuery = "UPDATE feature_store.usuario SET senha_hash = ? WHERE email = ?";
         jdbcTemplate.update(sqlQuery, senha, email);
     }

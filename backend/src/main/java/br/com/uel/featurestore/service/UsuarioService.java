@@ -96,7 +96,6 @@ public class UsuarioService {
 
         // Busca os dados do usuário no banco
         Usuario usuario = usuarioDAO.pegarUsuarioPorEmailBanco(email);
-        System.out.println("Usuário" + usuario);
         // Se o resultado for null, o usuário não existe e não realiza-se a validação de senha
         if (usuario == null) {
             throw new NoSuchElementException("O email está incorreto ou o usuário não existe!");

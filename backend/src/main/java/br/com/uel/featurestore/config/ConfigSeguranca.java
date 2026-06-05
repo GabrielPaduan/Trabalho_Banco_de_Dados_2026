@@ -1,5 +1,6 @@
 package br.com.uel.featurestore.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,9 +9,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import br.com.uel.featurestore.config.SecurityFilter;
 
 @Configuration // Classe relacionada a definição de segurança, quesito criptografia de dados
 public class ConfigSeguranca {
+    @Autowired
+    private SecurityFilter securityFilter;
+
     @Bean // Definição do tipo de criptografia adotada no projeto
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -28,12 +34,13 @@ public class ConfigSeguranca {
             // Configuração de acesso pelas rotas
             .authorizeHttpRequests(auth -> auth
                 // Verifica a paridade da requisição com a rota descrita, permitindo o acesso
-                // .requestMatchers(HttpMethod.POST, "/api/usuario/cadastrar").permitAll()
-                
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/cadastrar").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+                 
                 // Qualquer outra rota posterior será acessada apenas a partir do login
-                .anyRequest().permitAll()
-            );
-
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

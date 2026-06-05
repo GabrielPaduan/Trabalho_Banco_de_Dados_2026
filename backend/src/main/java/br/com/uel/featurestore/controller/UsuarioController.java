@@ -1,6 +1,7 @@
 package br.com.uel.featurestore.controller;
 
 import br.com.uel.featurestore.model.Usuario;
+import br.com.uel.featurestore.service.TokenService;
 import br.com.uel.featurestore.service.UsuarioService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,11 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/api/usuarios") // Define a rota para acessar as funções da classe usuário
 public class UsuarioController {
     private final UsuarioService usuarioService;
+    private final TokenService tokenService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, TokenService tokenService) {
         this.usuarioService = usuarioService;
+        this.tokenService = tokenService;
     }
 
     // Nas funções abaixo usa-se o tipo de retorno ResponseEntity afim de adequar as funções para lidar de forma completa com as requisições HTTP fornecendo mensagens de retorno personalizadas facilitando o rastreamento de erros
@@ -95,7 +98,9 @@ public class UsuarioController {
             boolean valido = usuarioService.loginUsuario(login, senha);
             
             if (valido) {
-                return ResponseEntity.status(200).body("Login realizado com sucesso!");
+                String token = tokenService.gerarToken(login);
+
+                return ResponseEntity.status(200).body(token);
             } else {
                 return ResponseEntity.status(401).body("Login ou senha incorretos!");
             }
