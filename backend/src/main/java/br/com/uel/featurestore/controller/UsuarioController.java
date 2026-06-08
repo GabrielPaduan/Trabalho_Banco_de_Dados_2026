@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 
 @RestController // Define a classe como o controlador das rotas conversando em JSON
-@RequestMapping("/api/usuarios") // Define a rota para acessar as funções da classe usuário
+@RequestMapping("/usuarios") // Define a rota para acessar as funções da classe usuário
 public class UsuarioController {
     private final UsuarioService usuarioService;
     private final TokenService tokenService;
@@ -92,11 +92,14 @@ public class UsuarioController {
         try {
             // Separa os campos obtidos do Map em dois atributos separados
             String login = credenciais.get("email");
-            String senha = credenciais.get("senhaHash");
-
+            String password = credenciais.get("password");
+            // System.out.println("Login: " + login);
+            // System.out.println("Senha: " + password);
+            // System.out.println("Credenciais: " + credenciais);
             // Chama a função de login verificando se o login é válido ou não
-            boolean valido = usuarioService.loginUsuario(login, senha);
-            
+            boolean valido = usuarioService.loginUsuario(login, password);
+            System.out.println("TESTE");
+
             if (valido) {
                 String token = tokenService.gerarToken(login);
 

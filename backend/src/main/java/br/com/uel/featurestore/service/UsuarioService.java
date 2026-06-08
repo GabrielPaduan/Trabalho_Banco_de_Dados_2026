@@ -100,10 +100,10 @@ public class UsuarioService {
         if (usuario == null) {
             throw new NoSuchElementException("O email está incorreto ou o usuário não existe!");
         }
-
+        
         // Através do passwordEncoder verifica se a senha inserida é igual a cadastrada no banco
         boolean validacao = passwordEncoder.matches(senha, usuario.getSenhaHash());
-
+        System.out.println("TESTE2");
         return validacao;
     }
 

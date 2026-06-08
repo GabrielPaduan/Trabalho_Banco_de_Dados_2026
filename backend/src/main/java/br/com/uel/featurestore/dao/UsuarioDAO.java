@@ -5,7 +5,6 @@ import br.com.uel.featurestore.model.Usuario;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
