@@ -16,16 +16,16 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String gerarToken(String cpf) {
+    public String generateToken(String cpf) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.create().withIssuer("FeatureStore").withSubject(cpf).withExpiresAt(gerarDataExpiracao()).sign(algorithm);
+            return JWT.create().withIssuer("FeatureStore").withSubject(cpf).withExpiresAt(generateExpeditionDate()).sign(algorithm);
         } catch (JWTCreationException e) {
             throw new RuntimeException("Erro ao gerar token JWT", e);
         }
     }
 
-    public String validarToken(String token) {
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm).withIssuer("FeatureStore").build().verify(token).getSubject();
@@ -34,7 +34,7 @@ public class TokenService {
         }
     }
 
-    private Instant gerarDataExpiracao() {
+    private Instant generateExpeditionDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }

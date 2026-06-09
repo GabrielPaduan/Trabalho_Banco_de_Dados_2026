@@ -22,7 +22,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = recuperarToken(request);
 
         if (token != null) {
-            String email = tokenService.validarToken(token);
+            String email = tokenService.validateToken(token);
 
             if (!email.isEmpty()) {
                 var authentication = new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());

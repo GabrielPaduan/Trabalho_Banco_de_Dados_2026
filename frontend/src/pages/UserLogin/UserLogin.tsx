@@ -10,12 +10,12 @@ export default function UserLogin() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const submitForm = async (e: React.SubmitEvent) => {
+    const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             const response = await doLogin(email, password);
             localStorage.setItem('@FeatureStore:token', response.data);
-            navigate('/');
+            navigate('/login');
         } catch (err: any) {
             if (err.response && err.response.data) {
                 setError(err.response.data);
@@ -40,7 +40,7 @@ export default function UserLogin() {
                 <Link component={"button"} variant="body2" onClick={() => navigate("/redefinir-senha")} sx={{ width: "100%" }}>
                     Esqueci minha senha!
                 </Link>
-                <Link component={"button"} variant="body2" onClick={() => navigate("/usuario/criar")} sx={{ width: "100%" }}>
+                <Link component={"button"} variant="body2" onClick={() => navigate("/usuario/cadastrar")} sx={{ width: "100%" }}>
                     Criar Conta
                 </Link>
             </Box>

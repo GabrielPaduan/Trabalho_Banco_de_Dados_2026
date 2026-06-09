@@ -4,7 +4,7 @@ interface FormularioUserProps {
     title: string,
     buttonText: string,
     error?: string,
-    onSubmit: (e: React.SubmitEvent) => void,
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
     children: React.ReactNode;
 }
 

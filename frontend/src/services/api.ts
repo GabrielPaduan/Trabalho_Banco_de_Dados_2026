@@ -28,7 +28,7 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response && error.response.status === 401) {
+        if (error.response && error.response.status === 401 && !error.config.url.includes('/login')) {
             localStorage.removeItem('@FeatureStore:token');
             window.location.href = '/login';
             

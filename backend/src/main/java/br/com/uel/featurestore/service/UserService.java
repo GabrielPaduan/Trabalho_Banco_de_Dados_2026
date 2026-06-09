@@ -1,7 +1,8 @@
 package br.com.uel.featurestore.service;
 
-import br.com.uel.featurestore.model.Usuario;
-import br.com.uel.featurestore.dao.UsuarioDAO;
+import br.com.uel.featurestore.dao.UserDAO;
+import br.com.uel.featurestore.model.User;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,119 +12,119 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service // Refere-se a implementação e validação das regras de negócio do sistema
-public class UsuarioService {
+public class UserService {
     // Atributo para poder acessar funções da classe UsuarioDAO
-    private final UsuarioDAO usuarioDAO;
+    private final UserDAO userDAO;
 
     // Uso da classe referente a criptografia de dados (usada para a senha)
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioDAO usuarioDAO) {
-        this.usuarioDAO = usuarioDAO;
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     // Funções que tratam os dados antes de serem enviados ao banco de dados
-    public void cadastrarNovoUsuario(Usuario usuario) {
+    public void createNewUser(User user) {
         // Validações de campos do usuário
-        if (usuario.getCpf() == null || usuario.getCpf().trim().isEmpty()) {
+        if (user.getCpf() == null || user.getCpf().trim().isEmpty()) {
             throw new IllegalArgumentException("O CPF do usuário não pode ser vazio!");
         }
 
         // Implementar a verificação de estrutura de CPF
-        if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("O nome do usuário não pode ser vazio!");
         }
 
-        if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty()) {
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("O email do usuário não pode ser vazio!");
         }
 
-        if (usuario.getSenhaHash() == null || usuario.getSenhaHash().trim().isEmpty()) {
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("A senha do usuário não pode estar vazia!");
         }
 
         // Realização do hashing da senha baseando-se na classe ConfigSegurança.java
-        String senha = usuario.getSenhaHash();
-        String senhaCriptografada = passwordEncoder.encode(senha);
-        usuario.setSenhaHash(senhaCriptografada);
+        String password = user.getPassword();
+        String passwordHash = passwordEncoder.encode(password);
+        user.setPassword(passwordHash);
 
         // Chama a DAO do usuário para executar a instrução SQL desejada
-        usuarioDAO.salvarUsuario(usuario);
+        userDAO.saveUser(user);
     }
 
-    public List<Usuario> pegarUsuarios() {
-        return usuarioDAO.obterUsuario();
+    public List<User> getUsers() {
+        return userDAO.getUser();
     }
 
-    public void excluirUsuario(String cpf) {
+    public void deleteUser(String cpf) {
         if (cpf == null || cpf.trim().isEmpty()) {
             throw new IllegalArgumentException("O valor de CPF não pode estar vazio!");
         }
         
-        usuarioDAO.removerUsuario(cpf);
+        userDAO.removeUser(cpf);
     }
 
-    public void atualizarUsuario(Usuario usuario) {
-        if (usuario.getCpf() == null || usuario.getCpf().trim().isEmpty()) {
+    public void updateUser(User user) {
+        if (user.getCpf() == null || user.getCpf().trim().isEmpty()) {
             throw new IllegalArgumentException("O cpf não pode estar vazio!");
         }
 
         // Garante que o usuário só será atualizado caso ou o nome ou o email tenham algum tipo de alteração
-        if ((usuario.getNome().trim().isEmpty() || usuario.getNome() == null) && (usuario.getEmail().trim().isEmpty() || usuario.getEmail() == null)) {
+        if ((user.getName().trim().isEmpty() || user.getName() == null) && (user.getEmail().trim().isEmpty() || user.getEmail() == null)) {
             throw new IllegalArgumentException("Para atualizar o usuário é necessário preencher no mínimo um campo!");    
         } 
-        usuarioDAO.atualizarDadosUsuarioPorCPF(usuario);
+        userDAO.updateUserDataByCPF(user);
     }
 
-    public Usuario pegarUsuarioPorEmail(String email) {
+    public User getUserByEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("O email não pode estar vazio!");
         }
 
-        Usuario usuario = usuarioDAO.pegarUsuarioPorEmailBanco(email); 
-        return usuario;
+        User user = userDAO.getUserByEmailDataBank(email); 
+        return user;
     }
 
-    public boolean loginUsuario(String email, String senha) {
+    public boolean userLogin(String email, String password) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("O email precisa estar preenchido!");
         }
 
-        if (senha == null || senha.trim().isEmpty()) {
+        if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("A senha precisa estar preenchida!");
         }
 
         // Busca os dados do usuário no banco
-        Usuario usuario = usuarioDAO.pegarUsuarioPorEmailBanco(email);
+        User user = this.getUserByEmail(email);
+        
         // Se o resultado for null, o usuário não existe e não realiza-se a validação de senha
-        if (usuario == null) {
+        if (user == null) {
             throw new NoSuchElementException("O email está incorreto ou o usuário não existe!");
         }
-        
         // Através do passwordEncoder verifica se a senha inserida é igual a cadastrada no banco
-        boolean validacao = passwordEncoder.matches(senha, usuario.getSenhaHash());
-        System.out.println("TESTE2");
-        return validacao;
+        boolean validation = passwordEncoder.matches(password, user.getPassword());
+
+        return validation;
     }
 
-    public void redefinirSenha(String email, String senha) {
+    public void redifinyPassword(String email, String password) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("O email não pode estar vazio!");
         }
 
-        if (senha == null || senha.trim().isEmpty()) {
+        if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("A senha não pode estar vazia!");
         }
         
-        Usuario usuario = usuarioDAO.pegarUsuarioPorEmailBanco(email);
+        User user = this.getUserByEmail(email);
 
-        if (usuario == null) {
+        if (user == null) {
             throw new NoSuchElementException("O email está incorreto ou o usuário não existe no banco!");
         }
 
-        String senhaHash = passwordEncoder.encode(senha);
+        String passwordHash = passwordEncoder.encode(password);
 
-        usuarioDAO.redefinirSenhaBanco(email, senhaHash);
+        userDAO.redifinyPasswordDataBank(email, passwordHash);
     }
 }

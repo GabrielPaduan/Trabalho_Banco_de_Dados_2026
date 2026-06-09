@@ -17,7 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration // Classe relacionada a definição de segurança, quesito criptografia de dados
-public class ConfigSeguranca {
+public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
@@ -42,7 +42,7 @@ public class ConfigSeguranca {
                 // Verifica a paridade da requisição com a rota descrita, permitindo o acesso
                 .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
-                 
+                .requestMatchers("/error").permitAll()
                 // Qualquer outra rota posterior será acessada apenas a partir do login
                 .anyRequest().authenticated()
             )

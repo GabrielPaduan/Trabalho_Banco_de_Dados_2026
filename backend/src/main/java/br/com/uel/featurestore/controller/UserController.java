@@ -1,12 +1,13 @@
 package br.com.uel.featurestore.controller;
 
-import br.com.uel.featurestore.model.Usuario;
+import br.com.uel.featurestore.model.User;
 import br.com.uel.featurestore.service.TokenService;
-import br.com.uel.featurestore.service.UsuarioService;
+import br.com.uel.featurestore.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.ResponseEntity;
 
@@ -14,12 +15,12 @@ import org.springframework.http.ResponseEntity;
 
 @RestController // Define a classe como o controlador das rotas conversando em JSON
 @RequestMapping("/usuarios") // Define a rota para acessar as funções da classe usuário
-public class UsuarioController {
-    private final UsuarioService usuarioService;
+public class UserController {
+    private final UserService userService;
     private final TokenService tokenService;
 
-    public UsuarioController(UsuarioService usuarioService, TokenService tokenService) {
-        this.usuarioService = usuarioService;
+    public UserController(UserService userService, TokenService tokenService) {
+        this.userService = userService;
         this.tokenService = tokenService;
     }
 
@@ -27,9 +28,9 @@ public class UsuarioController {
 
     // Usa a biblioteca Lista para armazenarmos os usuários obtidos nessa busca
     @GetMapping("/listar")
-    public ResponseEntity<List<Usuario>> listarUsuario() {
+    public ResponseEntity<List<User>> listUser() {
         try {
-            List<Usuario> lista = usuarioService.pegarUsuarios();
+            List<User> lista = userService.getUsers();
             return ResponseEntity.status(200).body(lista);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -38,22 +39,22 @@ public class UsuarioController {
 
     // Função que pega o usuário pelo email específico
     @GetMapping("/listar/pessoa")  
-    public ResponseEntity<?> listarUsuarioPorEmail(@RequestBody Map<String, String> identificador) {
+    public ResponseEntity<?> listUserByEmail(@RequestBody Map<String, String> identificator) {
         // Usa-se o Map<String, String> para receber um JSON qualquer em formato "atributo": "valorAtributo"
         try {
             // .get("email") obtém o valor do atributo enviado para ser usado no service~dao
-            String email = identificador.get("email");
-            Usuario usuario = usuarioService.pegarUsuarioPorEmail(email);
-            return ResponseEntity.status(200).body(usuario);
+            String email = identificator.get("email");
+            User user = userService.getUserByEmail(email);
+            return ResponseEntity.status(200).body(user);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/cadastrar") // Define uma função que ira inserir ou alterar um dado no banco de dados
-    public ResponseEntity<String> cadastrarUsuario(@RequestBody Usuario usuario) { // RequestBody faz com que o spring busque no corpo da requisição o JSON
+    public ResponseEntity<String> createUser(@RequestBody User user) { // RequestBody faz com que o spring busque no corpo da requisição o JSON
         try { // Bloco try...catch para controle das requisições garantindo um tracking eficiente de erros
-            usuarioService.cadastrarNovoUsuario(usuario); // chama o service de Usuario 
+            userService.createNewUser(user); // chama o service de Usuario 
             return ResponseEntity.status(201).body("Usuário cadastrado com sucesso!"); // Retorna status OK! em caso de sucesso
         } catch (IllegalArgumentException e) { // caso de erro de campo vazio
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -64,11 +65,11 @@ public class UsuarioController {
 
     // Função para exclusão de um usuário
     @DeleteMapping("/excluir")
-    public ResponseEntity<String> excluirUsuarioPorCpf(@RequestBody Map<String,String> identificador) {
+    public ResponseEntity<String> excluirUsuarioPorCpf(@RequestBody Map<String,String> identificator) {
         // Mesmo uso do Map e do get() aplicado na listagem por email
         try {
-            String cpf = identificador.get("cpf");
-            usuarioService.excluirUsuario(cpf);
+            String cpf = identificator.get("cpf");
+            userService.deleteUser(cpf);
             return ResponseEntity.status(200).body("Usuário removido com sucesso!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -77,9 +78,9 @@ public class UsuarioController {
 
     // Função para atualizar dados como email e nome do usuário
     @PutMapping("/atualizar")
-    public ResponseEntity<String> atualizarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> atualizarUsuario(@RequestBody User user) {
         try {
-            usuarioService.atualizarUsuario(usuario);
+            userService.updateUser(user);
             return ResponseEntity.status(200).build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -88,36 +89,34 @@ public class UsuarioController {
     
     // Função para realizar o login do usuário
     @PostMapping("/login")
-    public ResponseEntity<String> fazerLoginUsuario(@RequestBody Map<String, String> credenciais) {
+    public ResponseEntity<String> doUserLogin(@RequestBody Map<String, String> credentials) {
         try {
             // Separa os campos obtidos do Map em dois atributos separados
-            String login = credenciais.get("email");
-            String password = credenciais.get("password");
-            // System.out.println("Login: " + login);
-            // System.out.println("Senha: " + password);
-            // System.out.println("Credenciais: " + credenciais);
+            String login = credentials.get("email");
+            String password = credentials.get("password");
+
             // Chama a função de login verificando se o login é válido ou não
-            boolean valido = usuarioService.loginUsuario(login, password);
-            System.out.println("TESTE");
+            boolean valid = userService.userLogin(login, password);
 
-            if (valido) {
-                String token = tokenService.gerarToken(login);
-
+            if (valid) {
+                String token = tokenService.generateToken(login);
                 return ResponseEntity.status(200).body(token);
             } else {
                 return ResponseEntity.status(401).body("Login ou senha incorretos!");
             }
+        } catch(NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erro ao processar o Login!");
         }
     }
     
     @PostMapping("/redefinir-senha")
-    public ResponseEntity<String> redefinirSenhaUsuario(@RequestBody Map<String, String> identificador) {
+    public ResponseEntity<String> redifinyUserPassword(@RequestBody Map<String, String> identificador) {
         try {
             String email = identificador.get("email");
             String novaSenha = identificador.get("senhaHash");
-            usuarioService.redefinirSenha(email, novaSenha);
+            userService.redifinyPassword(email, novaSenha);
             return ResponseEntity.status(200).body("Senha redefinida com sucesso!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

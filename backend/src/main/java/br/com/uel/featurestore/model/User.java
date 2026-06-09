@@ -2,17 +2,17 @@ package br.com.uel.featurestore.model;
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Usuario {
+public class User {
     // Definição de atributos
     private String cpf;
-    private String nome;
+    private String name;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // A fim de segurança, essa JsonProperty foi implementada para evitar que o backend envie no JSON o atributo senha para o banco de dados, mas permite que o frontend envie a senha para o backend, permitindo - por exemplo - o cadastro
-    private String senhaHash;
-    private LocalDate dataCriacao;
+    private String password;
+    private LocalDate createdDate;
 
     // Criação de Construtor vazio (necessário com spring)
-    public Usuario() {}
+    public User() {}
 
     // Funções Getters e Setters
     public String getCpf() {
@@ -23,12 +23,12 @@ public class Usuario {
         this.cpf = cpf;
     }
 
-    public String getNome() {
-        return this.nome;
+    public String getName() {
+        return this.name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -39,19 +39,19 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getSenhaHash() {
-        return this.senhaHash;
+    public String getPassword() {
+        return this.password;
     }
 
-    public void setSenhaHash(String senha_hash) {
-        this.senhaHash = senha_hash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public LocalDate getDataCriacao() {
-        return this.dataCriacao;
+    public LocalDate getCreatedDate() {
+        return this.createdDate;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 }
