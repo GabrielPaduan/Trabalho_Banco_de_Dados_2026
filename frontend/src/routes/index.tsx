@@ -5,7 +5,7 @@ import CreateUser from "../pages/CreateUser/CreateUser"
 export const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<UserLogin />} />
+            <Route path="/login" element={<UserLogin />} />
             <Route path="/usuario/cadastrar" element={<CreateUser />} />
         </Routes>
     )
