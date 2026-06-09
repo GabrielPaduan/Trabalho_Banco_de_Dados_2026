@@ -1,10 +1,11 @@
 import { Link, Container, TextField, Box } from "@mui/material";
-import FormularioUser from "../../components/FormularioUser";
+import FormularioUser from "../../components/UserForm";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { doLogin } from "../../services/userService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function UserLogin() {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,8 +14,8 @@ export default function UserLogin() {
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await doLogin(email, password);
-            localStorage.setItem('@FeatureStore:token', response.data);
+            // const response = await doLogin(email, password);
+            login(email, password);
             navigate('/login');
         } catch (err: any) {
             if (err.response && err.response.data) {

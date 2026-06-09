@@ -42,7 +42,6 @@ public class SecurityConfig {
                 // Verifica a paridade da requisição com a rota descrita, permitindo o acesso
                 .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
-                .requestMatchers("/error").permitAll()
                 // Qualquer outra rota posterior será acessada apenas a partir do login
                 .anyRequest().authenticated()
             )
