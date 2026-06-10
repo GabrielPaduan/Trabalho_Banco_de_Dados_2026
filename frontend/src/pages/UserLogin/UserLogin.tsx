@@ -1,22 +1,26 @@
 import { Link, Container, TextField, Box } from "@mui/material";
 import FormularioUser from "../../components/UserForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function UserLogin() {
-    const { login } = useAuth();
+    const { login, authenticated } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (authenticated) {
+            navigate("/dashboard");
+        }
+    }, [authenticated])
+
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            // const response = await doLogin(email, password);
             login(email, password);
-            navigate('/login');
         } catch (err: any) {
             if (err.response && err.response.data) {
                 setError(err.response.data);

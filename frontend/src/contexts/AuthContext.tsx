@@ -1,7 +1,8 @@
 import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import { api } from "../services/api";
 import { doLogin } from "../services/userService";
+import { useNavigate } from "react-router-dom";
 
 interface TokenInterface {
     sub: string;
@@ -12,6 +13,7 @@ interface TokenInterface {
 interface AuthContextInterface {
     authenticated: boolean;
     loggedUser: TokenInterface | null;
+    loading: boolean;
     login: (cpf: string, password: string) => void;
     logout: () => void;
 }
@@ -20,10 +22,10 @@ export const AuthContext = createContext<AuthContextInterface>({} as AuthContext
 
 export function AuthProvider({children}: {children: ReactNode}) {
     const [loggedUser, setLoggedUser] = useState<TokenInterface | null>(null);
-
+    const [loading, setLoading] = useState<boolean>(true);
+    const navigate = useNavigate();
     useEffect(() => {
         const token = localStorage.getItem("@FeatureStore:token");
-
         if (token) {
             try {
                 // Tenta decodificar o token
@@ -32,13 +34,13 @@ export function AuthProvider({children}: {children: ReactNode}) {
                 if (decodedToken.exp < dataAtual) {
                     throw new Error("Token expirado! Deslogando...");
                 }
-
-                api.defaults.headers.common['Authorization'] = `Bearer: ${token}`;
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 setLoggedUser(decodedToken);
             } catch (err: any) {
                 logout();
             }
         }
+        setLoading(false);
     }, []);
 
     const login = async (cpf: string, password: string) => {
@@ -47,9 +49,10 @@ export function AuthProvider({children}: {children: ReactNode}) {
             const token = response.data;
 
             localStorage.setItem("@FeatureStore:token", token);
-            api.defaults.headers.common['Authorization'] = `Bearer: ${token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             const decodedToken = jwtDecode<TokenInterface>(token)
             setLoggedUser(decodedToken);
+            navigate("/dashboard");
         } catch (err: any) {
             throw new Error(err);
         }
@@ -66,6 +69,7 @@ export function AuthProvider({children}: {children: ReactNode}) {
             value={{
                 authenticated: !!loggedUser,
                 loggedUser,
+                loading,
                 login,
                 logout
             }}
