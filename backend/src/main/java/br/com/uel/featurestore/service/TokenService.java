@@ -16,10 +16,10 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(String cpf) {
+    public String generateToken(String email, String name) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.create().withIssuer("FeatureStore").withSubject(cpf).withExpiresAt(generateExpeditionDate()).sign(algorithm);
+            return JWT.create().withIssuer("FeatureStore").withSubject(email).withClaim("name", name).withExpiresAt(generateExpeditionDate()).sign(algorithm);
         } catch (JWTCreationException e) {
             throw new RuntimeException("Erro ao gerar token JWT", e);
         }
@@ -30,7 +30,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm).withIssuer("FeatureStore").build().verify(token).getSubject();
         } catch (JWTVerificationException e) {
-            return "";
+            throw new RuntimeException("Erro no JWT: " + e.getMessage());
         }
     }
 

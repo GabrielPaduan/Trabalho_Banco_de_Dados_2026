@@ -42,9 +42,6 @@ export default function UserLogin() {
                 <TextField label="Senha: " type="password" value={password} onChange={(e) => setPassword(e.target.value)} required fullWidth/>
             </FormularioUser>
             <Box sx={{ width: "70%", display: "flex", justifyContent: "space-between", flexDirection: "column", gap: 1}}>
-                <Link component={"button"} variant="body2" onClick={() => navigate("/redefinir-senha")} sx={{ width: "100%" }}>
-                    Esqueci minha senha!
-                </Link>
                 <Link component={"button"} variant="body2" onClick={() => navigate("/usuario/cadastrar")} sx={{ width: "100%" }}>
                     Criar Conta
                 </Link>

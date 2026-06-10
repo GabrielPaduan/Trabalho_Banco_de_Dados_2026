@@ -37,8 +37,8 @@ public class UserController {
         }
     }
 
-    // Função que pega o usuário pelo email específico
-    @GetMapping("/listar/pessoa")  
+    // Função que pega o usuário pelo email específico, a decisão pelo Post aqui é para não permitir que o email no caso apareça na URL
+    @PostMapping("/listar/pessoa")  
     public ResponseEntity<?> listUserByEmail(@RequestBody Map<String, String> identificator) {
         // Usa-se o Map<String, String> para receber um JSON qualquer em formato "atributo": "valorAtributo"
         try {
@@ -96,10 +96,10 @@ public class UserController {
             String password = credentials.get("password");
 
             // Chama a função de login verificando se o login é válido ou não
-            boolean valid = userService.userLogin(login, password);
+            String user = userService.userLogin(login, password);
 
-            if (valid) {
-                String token = tokenService.generateToken(login);
+            if (user != null) {
+                String token = tokenService.generateToken(login, user);
                 return ResponseEntity.status(200).body(token);
             } else {
                 return ResponseEntity.status(401).body("Login ou senha incorretos!");
@@ -110,20 +110,4 @@ public class UserController {
             return ResponseEntity.internalServerError().body("Erro ao processar o Login!");
         }
     }
-    
-    @PostMapping("/redefinir-senha")
-    public ResponseEntity<String> redifinyUserPassword(@RequestBody Map<String, String> identificador) {
-        try {
-            String email = identificador.get("email");
-            String novaSenha = identificador.get("senhaHash");
-            userService.redifinyPassword(email, novaSenha);
-            return ResponseEntity.status(200).body("Senha redefinida com sucesso!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erro ao processor a solicitação!");
-        }
-        
-    }
-    
 }

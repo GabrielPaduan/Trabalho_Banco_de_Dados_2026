@@ -86,7 +86,7 @@ public class UserService {
         return user;
     }
 
-    public boolean userLogin(String email, String password) {
+    public String userLogin(String email, String password) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("O email precisa estar preenchido!");
         }
@@ -105,26 +105,10 @@ public class UserService {
         // Através do passwordEncoder verifica se a senha inserida é igual a cadastrada no banco
         boolean validation = passwordEncoder.matches(password, user.getPassword());
 
-        return validation;
-    }
-
-    public void redifinyPassword(String email, String password) {
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("O email não pode estar vazio!");
+        if (validation == true) {
+            return user.getName();
+        } else {
+            return null;
         }
-
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("A senha não pode estar vazia!");
-        }
-        
-        User user = this.getUserByEmail(email);
-
-        if (user == null) {
-            throw new NoSuchElementException("O email está incorreto ou o usuário não existe no banco!");
-        }
-
-        String passwordHash = passwordEncoder.encode(password);
-
-        userDAO.redifinyPasswordDataBank(email, passwordHash);
     }
 }

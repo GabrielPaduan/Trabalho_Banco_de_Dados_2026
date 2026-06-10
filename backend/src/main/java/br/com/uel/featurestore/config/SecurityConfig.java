@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration // Classe relacionada a definição de segurança, quesito criptografia de dados
+@EnableWebSecurity
 public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
@@ -42,6 +44,7 @@ public class SecurityConfig {
                 // Verifica a paridade da requisição com a rota descrita, permitindo o acesso
                 .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/usuarios/redefinir-senha").permitAll()
                 // Qualquer outra rota posterior será acessada apenas a partir do login
                 .anyRequest().authenticated()
             )
