@@ -57,7 +57,7 @@ export function UpdateUser() {
     return (
         <>
             <DefaultHeader />
-            <Container component={"main"} sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: 1, paddingTop: 10 }}>
+            <Container component={"main"} maxWidth={"xs"} sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: 1, paddingTop: 10 }}>
                 <UserForm
                     title="Editar Perfil"
                     buttonText="Atualizar"
