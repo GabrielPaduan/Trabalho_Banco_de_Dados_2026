@@ -12,7 +12,7 @@ export default function UserForm({
     title, buttonText, error, onSubmit, children
 }: FormularioUserProps) {
     return (
-        <Box sx={{width:"70%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Box sx={{width:"100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
             <Typography component="h1" variant="h5">
                 {title}
             </Typography>
@@ -23,7 +23,7 @@ export default function UserForm({
                 </Alert>
             )}
 
-            <Box component="form" onSubmit={onSubmit} sx={{ width: '100%', display: "flex", flexDirection: "column", alignItems: "center", gap: 1}}>
+            <Box component="form" onSubmit={onSubmit} sx={{ minWidth: '30%', display: "flex", flexDirection: "column", alignItems: "center", gap: 2}}>
                 {children}
 
                 <Button type="submit" variant="contained">

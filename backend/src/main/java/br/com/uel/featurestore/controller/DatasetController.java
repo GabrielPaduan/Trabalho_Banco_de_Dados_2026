@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.uel.featurestore.model.Dataset;
 import br.com.uel.featurestore.service.DatasetService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,10 +28,10 @@ public class DatasetController {
     }
 
     @PostMapping("/inserir")
-    public ResponseEntity<String> criarDataset(@RequestBody Dataset dataset) {
+    public ResponseEntity<?> criarDataset(@RequestBody Dataset dataset) {
         try {
-            datasetService.inserirDatasetBanco(dataset);
-            return ResponseEntity.status(201).body("Dataset criado com sucesso!");
+            Dataset datasetReturn = datasetService.inserirDatasetBanco(dataset);
+            return ResponseEntity.status(201).body(datasetReturn);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -37,7 +39,22 @@ public class DatasetController {
         }
     }
 
-    @PostMapping("listar")
+    @PostMapping("/listarNome")
+    public ResponseEntity<?> listDatasetByName(@RequestBody Map<String, String> datasetName) {
+        try {
+            String name = datasetName.get("datasetName");
+            Dataset dataset = datasetService.listDatasetByName(name);
+            return ResponseEntity.status(200).body(dataset);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro na comunicação com o servidor: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/listar")
     public ResponseEntity<?> listUserDataset(@RequestBody Map<String, String> userEmail) {
         try {
             String email = userEmail.get("userEmail");
@@ -52,10 +69,11 @@ public class DatasetController {
         }
     }
 
-    @PostMapping("/excluir")
+    @DeleteMapping("/excluir")
     public ResponseEntity<String> desactivateDataset(@RequestBody Map<String, Integer> identificador) {
         try {
             Integer id = identificador.get("id");
+            System.out.println("Id: " + id);
             datasetService.desactiveDataset(id);
             return ResponseEntity.status(200).body("Dataset excluído com sucesso!");
         } catch (IllegalArgumentException e) {
@@ -65,7 +83,7 @@ public class DatasetController {
         }
     }
 
-    @PutMapping("atualizar")
+    @PutMapping("/atualizar")
     public ResponseEntity<String> updateDataset(@RequestBody Dataset dataset) {
         try {
             datasetService.updateDatset(dataset);

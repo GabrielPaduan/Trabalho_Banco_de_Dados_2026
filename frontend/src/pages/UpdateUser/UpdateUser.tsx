@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Container, TextField } from "@mui/material";
+import { CircularProgress, Container, Grid, TextField } from "@mui/material";
 import UserForm from "../../components/UserForm";
 import { useEffect, useState } from "react";
 import type { User } from "../../util/DTO";
@@ -6,6 +6,9 @@ import { getUserByEmail, updateUser } from "../../services/userService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { DefaultHeader } from "../../components/DefaultHeader";
+import { SideMenu } from "../../components/SideMenu";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export function UpdateUser() {
     const [error, setError] = useState("");
@@ -57,17 +60,31 @@ export function UpdateUser() {
     return (
         <>
             <DefaultHeader />
-            <Container component={"main"} maxWidth={"xs"} sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: 1, paddingTop: 10 }}>
-                <UserForm
-                    title="Editar Perfil"
-                    buttonText="Atualizar"
-                    error={error}
-                    onSubmit={onSubmit}
-                >
-                    <TextField label="Nome: " value={user?.name} onChange={(e) => setUser(prev =>({...prev, name: e.target.value}) as User)} required fullWidth/>
-                    <TextField label="Email: " placeholder="ex. exemplo@email.com" required value={user?.email} onChange={(e) => setUser(prev =>({...prev, email: e.target.value} as User))} fullWidth/>
-                </UserForm>
-                <Button variant="contained" onClick={() => navigate(-1)}>Voltar</Button>
+            <Container component="main" sx={{ display: "flex", justifyContent: "left", height: "80vh" }} maxWidth={false} >
+                <SideMenu />
+                <Container component={"section"} disableGutters maxWidth={false} sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", flexDirection: "column", gap: 1, paddingTop: 2 }}>
+                    <UserForm
+                        title="Perfil"
+                        buttonText="Atualizar"
+                        error={error}
+                        onSubmit={onSubmit}
+                    >
+                        <Grid container rowSpacing={2} columnSpacing={2}>
+                            <Grid size={6}>
+                                <TextField label="CPF: " value={user?.cpf} disabled fullWidth />
+                            </Grid>
+                            <Grid size={6}>
+                                <TextField label="Data de criação: " disabled value={format(user?.createdDate, 'dd/MM/yyyy', { locale: ptBR})} fullWidth/>
+                            </Grid>
+                            <Grid size={6}>
+                                <TextField label="Nome: " value={user?.name} onChange={(e) => setUser(prev =>({...prev, name: e.target.value}) as User)} required fullWidth/>
+                            </Grid>
+                            <Grid size={6}>
+                                <TextField label="Email: " placeholder="ex. exemplo@email.com" required value={user?.email} onChange={(e) => setUser(prev =>({...prev, email: e.target.value} as User))} fullWidth/>
+                            </Grid>                            
+                        </Grid>
+                    </UserForm>
+                </Container>
             </Container>
         </>
     )

@@ -18,7 +18,7 @@ public class DatasetDao {
 
     public void saveDataset(Dataset dataset) {
         String sqlQuery = "INSERT INTO feature_store.dataset (nome, descricao, data_criacao, cpf_usuario) VALUES(?, ?, CURRENT_DATE, ?)";
-        jdbcTemplate.update(sqlQuery, dataset.getName(), dataset.getDesc(), dataset.getUserCPF());
+        jdbcTemplate.update(sqlQuery, dataset.getName(), dataset.getDescription(), dataset.getUserCPF());
     }
 
     public List<Dataset> getDataset(String userCpf, Boolean active) {
@@ -27,12 +27,28 @@ public class DatasetDao {
             Dataset dataset = new Dataset();
             dataset.setId(rs.getInt("id"));
             dataset.setName(rs.getString("nome"));
-            dataset.setDesc(rs.getString("descricao"));
+            dataset.setDescription(rs.getString("descricao"));
             dataset.setCreatedDate(rs.getObject("data_criacao", LocalDate.class));
             dataset.setUserCPF(userCpf);
             dataset.setActive(rs.getBoolean("ativo"));
             return dataset;
         }, userCpf, active);
+    }
+
+    public Dataset getDatasetByName(String name, Boolean active) {
+        String sqlQuery = "SELECT * FROM feature_store.dataset WHERE nome = ? AND ativo = ?";
+         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
+                Dataset dataset = new Dataset();
+                dataset.setId(rs.getInt("id"));
+                dataset.setName(rs.getString("nome"));
+                dataset.setDescription(rs.getString("descricao"));
+                dataset.setCreatedDate(rs.getObject("data_criacao", LocalDate.class));
+                dataset.setUserCPF(rs.getString("cpf_usuario"));
+                dataset.setActive(rs.getBoolean("ativo"));
+                return dataset;
+            },
+            name, active
+        );
     }
 
     public void desactiveDataset(int id, boolean active) {
@@ -42,6 +58,6 @@ public class DatasetDao {
 
     public void updateDataset(Dataset dataset) {
         String sqlQuery = "UPDATE feature_store.dataset SET nome=?, descricao=? WHERE id=?";
-        jdbcTemplate.update(sqlQuery, dataset.getName(), dataset.getDesc(), dataset.getId());
+        jdbcTemplate.update(sqlQuery, dataset.getName(), dataset.getDescription(), dataset.getId());
     }
 }

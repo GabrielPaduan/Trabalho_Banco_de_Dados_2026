@@ -19,7 +19,7 @@ public class DatasetService {
         this.userService = userService;
     }
 
-    public void inserirDatasetBanco(Dataset dataset) {
+    public Dataset inserirDatasetBanco(Dataset dataset) {
         if (dataset.getName() == null || dataset.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("O campo nome não pode estar vazio!");
         }
@@ -29,6 +29,27 @@ public class DatasetService {
         }
 
         datasetDao.saveDataset(dataset);
+
+        Dataset datasetReturn = this.listDatasetByName(dataset.getName());
+        if (datasetReturn == null) {
+            throw new NoSuchElementException("O nome do dataset não foi encontrado!");
+        } else {
+            return datasetReturn;
+        }
+    }
+
+    public Dataset listDatasetByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("O atributo nome não pode estar vazio!");
+        }
+
+        Dataset dataset = datasetDao.getDatasetByName(name, true);
+
+        if (dataset == null) {
+            throw new NoSuchElementException("O nome do dataset não foi encontrado!");
+        } else {
+            return dataset;
+        }
     }
 
     public List<Dataset> listDatasets(String userEmail) {
@@ -48,9 +69,8 @@ public class DatasetService {
 
     public void desactiveDataset(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("Id do dataset necessário para exclusão");
+            throw new IllegalArgumentException("Id do dataset é necessário para exclusão");
         }
-
         datasetDao.desactiveDataset(id, false);
     }
 
@@ -67,7 +87,7 @@ public class DatasetService {
             throw new IllegalArgumentException("O nome não pode estar vazio!");    
         }
 
-        if (dataset.getDesc() == null || dataset.getDesc().trim().isEmpty()) {
+        if (dataset.getDescription() == null || dataset.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("A descrição não pode estar vazia!");
         }
 

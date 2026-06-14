@@ -12,7 +12,7 @@ export const AppRoutes = () => {
             <Route path="/usuario/cadastrar" element={<CreateUser />} />
             
             <Route element={<ProtectedRoutes />}>
-                <Route path="/editarUsuario" element={<UpdateUser />} />
+                <Route path="/perfil" element={<UpdateUser />} />
                 <Route path="/dashboard" element={<Dashboard />} />
             </Route>
 

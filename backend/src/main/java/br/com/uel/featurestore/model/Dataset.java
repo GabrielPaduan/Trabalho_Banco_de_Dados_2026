@@ -26,11 +26,11 @@ public class Dataset {
         this.name = name;
     }
 
-    public String getDesc() {
+    public String getDescription() {
         return this.description;
     }
 
-    public void setDesc(String desc) {
+    public void setDescription(String desc) {
         this.description = desc;
     }
 

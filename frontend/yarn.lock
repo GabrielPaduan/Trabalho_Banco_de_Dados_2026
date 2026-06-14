@@ -398,6 +398,13 @@
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-9.0.1.tgz#74be0bfd6bef24d76fe009be9d91851516278749"
   integrity sha512-GzamIIhZ1bH77dq7eKaeyRgJdkypsxin4jBFq2EMs4lBWRR0LFO1CSVMsoebn/VvjcNrnrOrjy48MkrkQUK2iw==
 
+"@mui/icons-material@^9.1.1":
+  version "9.1.1"
+  resolved "https://registry.npmjs.org/@mui/icons-material/-/icons-material-9.1.1.tgz#d88c728d36f1af536636b3b25bbad32cfb9480ae"
+  integrity sha512-OXhm9DajemStb58AumM06DuPhHTa3XD36TFD4yf6WtJyNRO5DfEZbbnHlBg/US2Y2oOXwM/XurMTBOD6L/YYZw==
+  dependencies:
+    "@babel/runtime" "^7.29.2"
+
 "@mui/material@^9.0.1":
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-9.0.1.tgz#0260b0787cd44761e4faebc03b35f12018a5106a"
@@ -878,6 +885,11 @@ csstype@^3.0.2, csstype@^3.2.2, csstype@^3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.2.3.tgz#ec48c0f3e993e50648c86da559e2610995cf989a"
   integrity sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==
+
+date-fns@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.npmjs.org/date-fns/-/date-fns-4.4.0.tgz#806539edf45c616b2b76b5f78b88c56ed3c7e036"
+  integrity sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==
 
 debug@4, debug@^4.1.0, debug@^4.3.1, debug@^4.3.2, debug@^4.4.3:
   version "4.4.3"
