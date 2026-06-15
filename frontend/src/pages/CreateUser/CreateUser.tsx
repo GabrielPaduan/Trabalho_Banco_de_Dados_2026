@@ -1,5 +1,5 @@
 import { Container, Link, TextField } from "@mui/material";
-import FormularioUser from "../../components/UserForm";
+import FormularioUser from "../../components/GenericForm";
 import { useState } from "react";
 import type { User } from "../../util/DTO";
 import { useNavigate } from "react-router-dom";

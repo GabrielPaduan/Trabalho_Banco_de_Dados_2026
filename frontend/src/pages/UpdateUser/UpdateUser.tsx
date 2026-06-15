@@ -1,5 +1,5 @@
 import { CircularProgress, Container, Grid, TextField } from "@mui/material";
-import UserForm from "../../components/UserForm";
+import UserForm from "../../components/GenericForm";
 import { useEffect, useState } from "react";
 import type { User } from "../../util/DTO";
 import { getUserByEmail, updateUser } from "../../services/userService";
