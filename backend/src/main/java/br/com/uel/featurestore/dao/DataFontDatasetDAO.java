@@ -20,6 +20,17 @@ public class DataFontDatasetDAO {
         jdbcTemplate.update(sqlQuery, data.getDatasetId(), data.getDataFontId());
     }
 
+    public List<DataFontDataset> getRelationByDataFontIdDatasetId(int datasetId, int dataFontId) {
+        String sqlQuery = "SELECT * FROM feature_store.fonte_dados_dataset WHERE id_dataset = ? AND id_fonte_dados = ?";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+            DataFontDataset dataFont = new DataFontDataset();
+            dataFont.setId(rs.getInt("id"));
+            dataFont.setDatasetId(datasetId);
+            dataFont.setDataFontId(dataFontId);
+            return dataFont;
+        }, datasetId, dataFontId);
+    }
+
     public List<DataFontDataset> getRelationDataFontDatasetByDatasetId(int id) {
         String sqlQuery = "SELECT * FROM feature_store.fonte_dados_dataset WHERE id_dataset = ?";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {

@@ -25,8 +25,30 @@ public class DataFontDatasetService {
             throw new IllegalArgumentException("Os identificadores de dataset ou fonte de dados são inválidos!");
         }
 
+        List<DataFontDataset> listDataFontDatasetResponse = this.getRelationByDataFontIdDatasetId(dataFontDataset.getDatasetId(), dataFontDataset.getDataFontId());
+
+        if (listDataFontDatasetResponse.size() > 0) {
+            throw new IllegalArgumentException("O dataset selecionado já possui essa fonte de dados!");
+        }
+
         dataFontDatasetDAO.createRelationDataFontDataset(dataFontDataset);
-        System.out.println("SERVICE: PROBLEMA!");
+    }
+
+    public List<DataFontDataset> getRelationByDataFontIdDatasetId(int datasetId, int dataFontId) {
+        if (datasetId < 0) {
+            throw new IllegalArgumentException("O id do dataset é inválido");
+        }
+
+        if (dataFontId < 0) {
+            throw new IllegalArgumentException("O id do dataset é inválido");
+        }
+
+        List<DataFontDataset> listDataFontDataset = dataFontDatasetDAO.getRelationByDataFontIdDatasetId(datasetId, dataFontId);
+        if (listDataFontDataset == null) {
+            throw new NoSuchElementException("Não existe uma relação entre dataset e fonte de dados com esse id!");
+        }
+
+        return listDataFontDataset;
     }
 
     public List<DataFontDataset> getRelationDataFontDatasetByDatasetId(int datasetId) {

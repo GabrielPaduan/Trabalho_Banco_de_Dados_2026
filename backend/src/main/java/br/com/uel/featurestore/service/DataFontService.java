@@ -16,7 +16,7 @@ public class DataFontService {
         this.dataFontDao = dataFontDao;
     }
 
-    public void createDataFont(DataFont data) {
+    public DataFont createDataFont(DataFont data) {
         if (data == null) {
             throw new IllegalArgumentException("Parâmetro inválido");
         }        
@@ -26,6 +26,9 @@ public class DataFontService {
         }
 
         dataFontDao.createDataFont(data);
+
+        DataFont dataFont = this.getDataFontByName(data.getName());
+        return dataFont;
     }
 
     public List<DataFont> getDataFont() {
@@ -35,5 +38,14 @@ public class DataFontService {
         } 
 
         return listDataFont;
+    }
+
+    public DataFont getDataFontByName(String name) {
+        DataFont dataFont = dataFontDao.getDataFontByName(name);
+        if (dataFont == null) {
+            throw new NoSuchElementException("Não foi encontrado nenhuma fonte de dados!");
+        } 
+
+        return dataFont;
     }
 }

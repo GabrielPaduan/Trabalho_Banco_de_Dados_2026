@@ -1,4 +1,4 @@
-import type { DataFont } from "../util/DTO";
+import type { DataFont, DataFontPost } from "../util/DTO";
 import { api } from "./api";
 
 export const getDataFonts = async (): Promise<DataFont[]> => {
@@ -6,7 +6,7 @@ export const getDataFonts = async (): Promise<DataFont[]> => {
     return response.data;
 }
 
-export const createDataFont = async (dataFont: DataFont): Promise<DataFont> => {
-    const response = await api.post("datasets/inserir", dataFont);
+export const createDataFont = async (dataFont: DataFontPost): Promise<DataFont> => {
+    const response = await api.post("fonteDados/criar", dataFont);
     return response.data;
 }

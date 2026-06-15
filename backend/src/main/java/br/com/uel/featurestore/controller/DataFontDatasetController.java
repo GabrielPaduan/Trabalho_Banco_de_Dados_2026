@@ -7,29 +7,30 @@ import br.com.uel.featurestore.model.DataFontDataset;
 import br.com.uel.featurestore.service.DataFontDatasetService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.catalina.connector.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/fonteDadosDataset")
 public class DataFontDatasetController {
+    
     private final DataFontDatasetService dataFontDatasetService;
 
     public DataFontDatasetController(DataFontDatasetService dataFontDatasetService) {
         this.dataFontDatasetService = dataFontDatasetService;
     }
 
-    @PostMapping("/criar")
+    @PostMapping
     public ResponseEntity<String> createNewRelation(@RequestBody DataFontDataset dataFontDataset) {
         try {
             dataFontDatasetService.createRelationDataFontDataset(dataFontDataset);
-            return ResponseEntity.ok().body("Busca realizada com sucesso!");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Relação criada com sucesso!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -37,31 +38,29 @@ public class DataFontDatasetController {
         }
     }
     
-    @PostMapping("/listarPorDataset")
-    public ResponseEntity<?> getRelationByDatasetId(@RequestBody Map<String, Integer> datasetId) {
+    @GetMapping("/dataset/{datasetId}")
+    public ResponseEntity<?> getRelationByDatasetId(@PathVariable int datasetId) {
         try {
-            int id = datasetId.get("datasetId");
-            List<DataFontDataset> listDataFontDataset = dataFontDatasetService.getRelationDataFontDatasetByDatasetId(id);
+            List<DataFontDataset> listDataFontDataset = dataFontDatasetService.getRelationDataFontDatasetByDatasetId(datasetId);
             return ResponseEntity.ok().body(listDataFontDataset);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (NoSuchElementException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erro na comunicação com o servidor!");
         }
     }
     
-    @PostMapping("/listarPorDataFont")
-    public ResponseEntity<?> getRelationByDataFontId(@RequestBody Map<String, Integer> dataFontId) {
+    @GetMapping("/fonte/{dataFontId}")
+    public ResponseEntity<?> getRelationByDataFontId(@PathVariable int dataFontId) {
         try {
-            int id = dataFontId.get("dataFontId");
-            List<DataFontDataset> listDataFontId = dataFontDatasetService.getRelationDataFontDatasetByDataFontId(id);
+            List<DataFontDataset> listDataFontId = dataFontDatasetService.getRelationDataFontDatasetByDataFontId(dataFontId);
             return ResponseEntity.ok().body(listDataFontId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (NoSuchElementException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erro na comunicação com o servidor!");
         }

@@ -2,7 +2,7 @@ import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 import { DatasetCard } from "./DatasetCard";
 import { useEffect, useState } from "react";
-import { type DataFontDataset, type DataFont, type Dataset, type DatasetPost } from "../util/DTO";
+import { type DataFontPost, type DataFont, type Dataset, type DatasetPost } from "../util/DTO";
 import { createDataset, getDatasets, deleteDatasetById } from "../services/datasetService";
 import { ConfirmModal } from "./Modal";
 import { getUserByEmail } from "../services/userService";
@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { createDataFont, getDataFonts } from "../services/dataFontService";
 import MultipleSelectChip from "./MultipleSelectChip";
 import { createRelationDataFontDataset } from "../services/dataFontDatasetService";
+import { ChildModal } from "./ChildModal";
 
 export function DatasetCards() {
     const [datasets, setDatasets] = useState<Dataset[]>();
@@ -24,6 +25,7 @@ export function DatasetCards() {
     const [selectedId, setSelectedId] = useState<number>();
     const [dataFont, setDataFont] = useState<DataFont[]>([]);
     const [selectedFontsIds, setSelectedFontsIds] = useState<number[]>([]);
+    const [fontDataName, setFontDataName] = useState<DataFontPost>();
 
     const navigate = useNavigate();
 
@@ -121,12 +123,19 @@ export function DatasetCards() {
         }
     }
 
-    // const handleCreateNewDataFont = () => {
-    //     const novaFonte = window.prompt("Digite o nome da nova fonte de dados:");
-    //     if (novaFonte) {
-    //         console.log("Nova fonte para criar:", novaFonte);
-    //     }
-    // };
+    const handleCreateNewDataFont = async () => {
+        try {
+            const fontDataResponse = await createDataFont(fontDataName as DataFontPost);
+            setDataFont((prev) => [...prev, fontDataResponse]);
+            setFontDataName({name: ""});
+        } catch (err: any) {
+            if (err?.response) {
+                console.log("Erro: ", err?.response.data);
+            } else {
+                console.log("Erro interno no servidor!");
+            }
+        }
+    };
 
     return (
         <Container component="section" sx={{ display: "flex", flexDirection: "column", gap: 3}}>
@@ -145,6 +154,16 @@ export function DatasetCards() {
                     selectedFontsIds={selectedFontsIds}
                     onChange={setSelectedFontsIds}
                 />
+                <ChildModal
+                    createFunc={handleCreateNewDataFont}
+                >
+                    <TextField
+                        label="Fonte de Dado"
+                        value={fontDataName?.name ?? ""}
+                        onChange={(e) => setFontDataName((prev) => ({ ...(prev ?? {}), name: e.target.value }))}
+                        fullWidth
+                    />
+                </ChildModal>
             </ConfirmModal>
 
             <ConfirmModal

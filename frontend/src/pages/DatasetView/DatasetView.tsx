@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import GenericForm from "../../components/GenericForm";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 import { getDataFonts } from "../../services/dataFontService";
-import { getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
+import { createRelationDataFontDataset, getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
 
 export function DatasetView() {
     const { id } = useParams();
@@ -71,6 +71,11 @@ export function DatasetView() {
             const datasetReponse = await updateDataset(datasetUpdates as Dataset);
             setDataset(datasetReponse);
             setDatasetUpdates(datasetReponse);
+             await Promise.all(selectedFontsIds.map((fontId) => {
+                    const payload = ({datasetId: datasetReponse.id, dataFontId: fontId});
+                    return createRelationDataFontDataset(payload);  
+                })
+            )
         } catch (err: any) {
             if (err?.response.data) {
                 console.log("Erro: " + err?.response.data);

@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-
 
 @RestController // Define a classe como o controlador das rotas conversando em JSON
 @RequestMapping("/usuarios") // Define a rota para acessar as funções da classe usuário
@@ -27,7 +26,7 @@ public class UserController {
     // Nas funções abaixo usa-se o tipo de retorno ResponseEntity afim de adequar as funções para lidar de forma completa com as requisições HTTP fornecendo mensagens de retorno personalizadas facilitando o rastreamento de erros
 
     // Usa a biblioteca Lista para armazenarmos os usuários obtidos nessa busca
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<User>> listUser() {
         try {
             List<User> lista = userService.getUsers();
@@ -37,13 +36,10 @@ public class UserController {
         }
     }
 
-    // Função que pega o usuário pelo email específico, a decisão pelo Post aqui é para não permitir que o email no caso apareça na URL
-    @PostMapping("/listar/pessoa")  
-    public ResponseEntity<?> listUserByEmail(@RequestBody Map<String, String> identificator) {
-        // Usa-se o Map<String, String> para receber um JSON qualquer em formato "atributo": "valorAtributo"
+    // Função que pega o usuário pelo email específico
+    @GetMapping("/{email}")  
+    public ResponseEntity<?> listUserByEmail(@PathVariable String email) {
         try {
-            // .get("email") obtém o valor do atributo enviado para ser usado no service~dao
-            String email = identificator.get("email");
             User user = userService.getUserByEmail(email);
             return ResponseEntity.status(200).body(user);
         } catch (Exception e) {
@@ -51,7 +47,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/cadastrar") // Define uma função que ira inserir ou alterar um dado no banco de dados
+    @PostMapping // Define uma função que ira inserir ou alterar um dado no banco de dados
     public ResponseEntity<String> createUser(@RequestBody User user) { // RequestBody faz com que o spring busque no corpo da requisição o JSON
         try { // Bloco try...catch para controle das requisições garantindo um tracking eficiente de erros
             userService.createNewUser(user); // chama o service de Usuario 
@@ -64,11 +60,9 @@ public class UserController {
     }
 
     // Função para exclusão de um usuário
-    @DeleteMapping("/excluir")
-    public ResponseEntity<String> excluirUsuarioPorCpf(@RequestBody Map<String,String> identificator) {
-        // Mesmo uso do Map e do get() aplicado na listagem por email
+    @DeleteMapping("/{cpf}")
+    public ResponseEntity<String> excluirUsuarioPorCpf(@PathVariable String cpf) {
         try {
-            String cpf = identificator.get("cpf");
             userService.deleteUser(cpf);
             return ResponseEntity.status(200).body("Usuário removido com sucesso!");
         } catch (IllegalArgumentException e) {
@@ -77,7 +71,7 @@ public class UserController {
     }
 
     // Função para atualizar dados como email e nome do usuário
-    @PutMapping("/atualizar")
+    @PutMapping
     public ResponseEntity<String> atualizarUsuario(@RequestBody User user) {
         try {
             userService.updateUser(user);

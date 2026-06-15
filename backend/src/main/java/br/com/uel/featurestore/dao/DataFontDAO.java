@@ -29,4 +29,14 @@ public class DataFontDAO {
             return dataFont;
         });
     }
+
+    public DataFont getDataFontByName(String name) {
+        String sqlQuery = "SELECT * FROM feature_store.fonte_de_dados WHERE nome = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
+            DataFont dataFont = new DataFont();
+            dataFont.setId(rs.getInt("id"));
+            dataFont.setName(rs.getString("nome"));
+            return dataFont;
+        }, name);
+    }
 }

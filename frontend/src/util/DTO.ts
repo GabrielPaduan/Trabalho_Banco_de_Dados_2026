@@ -22,6 +22,8 @@ export interface DataFont {
     name: string
 }
 
+export type DataFontPost = Omit<DataFont, 'id'>
+
 export interface DataFontDataset {
     id: number,
     datasetId: number,
