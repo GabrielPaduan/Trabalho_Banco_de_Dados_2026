@@ -4,13 +4,18 @@ import { useParams } from "react-router-dom";
 import { SideMenu } from "../../components/SideMenu";
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { useEffect, useState } from "react";
-import type { Dataset } from "../../util/DTO";
+import type { Dataset, User } from "../../util/DTO";
 import { getDatasetByName } from "../../services/datasetService";
+import { useAuth } from "../../hooks/useAuth";
+import { getUserByEmail } from "../../services/userService";
+import { format } from "date-fns";
 
 export function DatasetView() {
     const { name } = useParams();
     const [dataset, setDataset] = useState<Dataset>();
     const [pageValue, setPageValue] = useState("1");
+    const [user, setUser] = useState<User>();
+    const { loggedUser } = useAuth();
 
     function handleChangeTab(event: React.SyntheticEvent, newValue: string) {
         setPageValue(newValue);
@@ -23,9 +28,16 @@ export function DatasetView() {
                     console.log("Nome está inválido!");
                     return;
                 }
-                const response = await getDatasetByName(name);
-                console.log(response)
-                setDataset(response);
+                if (loggedUser?.sub == undefined) {
+                    console.log("Usuário está inválido!");
+                    return;
+                }
+                const [responseDataset, responseUser ] = await Promise.all([
+                    getDatasetByName(name),
+                    getUserByEmail(loggedUser?.sub)
+                ]) 
+                setDataset(responseDataset);
+                setUser(responseUser);
             } catch (err: any) {
                 if (err.response && err.response.data) {
                     console.log("Err: " + err.response.data);
@@ -66,11 +78,11 @@ export function DatasetView() {
                                 <Box sx={{ width: "100%", display: "flex", gap: 4, paddingTop: 2 }}>
                                     <Box>
                                         <Typography>Criador</Typography>
-                                        <Typography>Fulano</Typography>
+                                        <Typography>{user?.name}</Typography>
                                     </Box>
                                     <Box>
                                         <Typography>Data de Criação</Typography>
-                                        <Typography>20/03/2020</Typography>
+                                        <Typography>{format(dataset?.createdDate, "dd/MM/yyyy")}</Typography>
                                     </Box>
                                     <Box>
                                         <Typography>Tamanho Total</Typography>
