@@ -1,12 +1,15 @@
-import { Box, Button, CircularProgress, Container, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 import { DatasetCard } from "./DatasetCard";
 import { useEffect, useState } from "react";
-import type { Dataset, DatasetPost } from "../util/DTO";
+import { type DataFontDataset, type DataFont, type Dataset, type DatasetPost } from "../util/DTO";
 import { createDataset, getDatasets, deleteDatasetById } from "../services/datasetService";
 import { ConfirmModal } from "./Modal";
 import { getUserByEmail } from "../services/userService";
 import { useNavigate } from "react-router-dom";
+import { createDataFont, getDataFonts } from "../services/dataFontService";
+import MultipleSelectChip from "./MultipleSelectChip";
+import { createRelationDataFontDataset } from "../services/dataFontDatasetService";
 
 export function DatasetCards() {
     const [datasets, setDatasets] = useState<Dataset[]>();
@@ -19,10 +22,13 @@ export function DatasetCards() {
     const [ createModalStatus, setCreateModalStatus ] = useState<boolean>(false);
     const [ deleteModalStatus, setDeleteModalStatus ] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<number>();
+    const [dataFont, setDataFont] = useState<DataFont[]>([]);
+    const [selectedFontsIds, setSelectedFontsIds] = useState<number[]>([]);
+
     const navigate = useNavigate();
 
-    const handleNavigate = (name: String) => {
-        navigate(`/dataset/${name}`);
+    const handleNavigate = (id: number) => {
+        navigate(`/dataset/${id.toString()}`);
     }
 
     const handleOpenCreateModal = () => {
@@ -50,9 +56,10 @@ export function DatasetCards() {
 
             try {
                 if(loggedUser?.sub !== undefined) {
-                    const [responseDataset, responseUser] = await Promise.all([
+                    const [responseDataset, responseUser, responseDataFont] = await Promise.all([
                         getDatasets(loggedUser?.sub),
-                        getUserByEmail(loggedUser?.sub)
+                        getUserByEmail(loggedUser?.sub),
+                        getDataFonts()
                     ]) 
                     if (responseDataset !== undefined){ 
                         setDatasets(responseDataset);
@@ -60,6 +67,10 @@ export function DatasetCards() {
 
                     if (responseUser?.cpf !== undefined) {
                         setDataset(prev => ({...prev, userCPF: responseUser.cpf}));
+                    }
+
+                    if (responseDataFont !== undefined) {
+                        setDataFont(responseDataFont);
                     }
                 }
             } catch (err: any) {
@@ -69,20 +80,25 @@ export function DatasetCards() {
             }
         }
         fetchDatasets();
-        
     }, [loggedUser?.sub])
 
     const createNewDataset = async (data: DatasetPost) => {
         try {
             if (data !== null) {
                 const newDataset = await createDataset(data);
-                console.log(newDataset);
                 setDatasets(datasets => [...(datasets || []), newDataset]);
+                
+                await Promise.all(selectedFontsIds.map((fontId) => {
+                        const payload = ({datasetId: newDataset.id, dataFontId: fontId});
+                        return createRelationDataFontDataset(payload);  
+                    })
+                )
                 handleCloseCreateModal();
                 setDataset({ name: "", description: "", userCPF: data.userCPF });
+                setSelectedFontsIds([]);
             } 
         } catch (err: any) {
-            if (err.response.data && err.response) {
+            if (err.response?.data) {
                 console.log(err.response.data)
             } else {
                 console.log("Erro na comunicação com o servidor!")
@@ -105,6 +121,13 @@ export function DatasetCards() {
         }
     }
 
+    // const handleCreateNewDataFont = () => {
+    //     const novaFonte = window.prompt("Digite o nome da nova fonte de dados:");
+    //     if (novaFonte) {
+    //         console.log("Nova fonte para criar:", novaFonte);
+    //     }
+    // };
+
     return (
         <Container component="section" sx={{ display: "flex", flexDirection: "column", gap: 3}}>
             <ConfirmModal
@@ -117,6 +140,11 @@ export function DatasetCards() {
             >
                 <TextField label="Titulo: " value={dataset?.name}onChange={(e) => setDataset(prevDataset => ({...prevDataset, name: e.target.value}))} fullWidth />
                 <TextField label="Descrição: " value={dataset?.description} onChange={(e) => setDataset(prevDataset => ({...prevDataset, description: e.target.value}))} fullWidth />
+                <MultipleSelectChip 
+                    dataFont={dataFont ?? []}
+                    selectedFontsIds={selectedFontsIds}
+                    onChange={setSelectedFontsIds}
+                />
             </ConfirmModal>
 
             <ConfirmModal
@@ -150,8 +178,7 @@ export function DatasetCards() {
                                 active={dataset.active}
                                 deleteModal={() => handleOpenDeleteModal(dataset.id)}
                                 key={dataset.id}
-                                navigate={() => handleNavigate(dataset.name)}
-                                minWidthPersonal="240px"
+                                navigate={() => handleNavigate(dataset.id)}
                             />
                         )) 
                     ) : ( 

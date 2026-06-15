@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import br.com.uel.featurestore.model.Dataset;
 
 @Repository
-public class DatasetDao {
+public class DatasetDAO {
     private final JdbcTemplate jdbcTemplate;
 
-    public DatasetDao(JdbcTemplate jdbcTemplate) {
+    public DatasetDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -33,6 +33,22 @@ public class DatasetDao {
             dataset.setActive(rs.getBoolean("ativo"));
             return dataset;
         }, userCpf, active);
+    }
+
+    public Dataset getDatasetById(Integer id, Boolean active) {
+        String sqlQuery = "SELECT * FROM feature_store.dataset WHERE id = ? AND ativo = ?";
+         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
+                Dataset dataset = new Dataset();
+                dataset.setId(rs.getInt("id"));
+                dataset.setName(rs.getString("nome"));
+                dataset.setDescription(rs.getString("descricao"));
+                dataset.setCreatedDate(rs.getObject("data_criacao", LocalDate.class));
+                dataset.setUserCPF(rs.getString("cpf_usuario"));
+                dataset.setActive(rs.getBoolean("ativo"));
+                return dataset;
+            },
+            id, active
+        );
     }
 
     public Dataset getDatasetByName(String name, Boolean active) {

@@ -15,7 +15,7 @@ export const AppRoutes = () => {
             <Route element={<ProtectedRoutes />}>
                 <Route path="/perfil" element={<UpdateUser />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/dataset/:name" element={<DatasetView />} />
+                <Route path="/dataset/:id" element={<DatasetView />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/login"/>} />

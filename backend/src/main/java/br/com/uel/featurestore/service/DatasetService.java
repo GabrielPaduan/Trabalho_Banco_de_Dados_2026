@@ -5,16 +5,16 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
-import br.com.uel.featurestore.dao.DatasetDao;
+import br.com.uel.featurestore.dao.DatasetDAO;
 import br.com.uel.featurestore.model.Dataset;
 import br.com.uel.featurestore.model.User;
 
 @Service
 public class DatasetService {
-    private final DatasetDao datasetDao;
+    private final DatasetDAO datasetDao;
     private final UserService userService;
 
-    public DatasetService(DatasetDao datasetDao, UserService userService) {
+    public DatasetService(DatasetDAO datasetDao, UserService userService) {
         this.datasetDao = datasetDao;
         this.userService = userService;
     }
@@ -38,12 +38,27 @@ public class DatasetService {
         }
     }
 
-    public Dataset listDatasetByName(String name) {
-        if (name == null || name.trim().isEmpty()) {
+      public Dataset listDatasetByName(String name) {
+        if (name != null && name.trim().isEmpty()) {
             throw new IllegalArgumentException("O atributo nome não pode estar vazio!");
         }
 
         Dataset dataset = datasetDao.getDatasetByName(name, true);
+
+        if (dataset == null) {
+            throw new NoSuchElementException("O nome do dataset não foi encontrado!");
+        } else {
+            return dataset;
+        }
+    }
+
+
+    public Dataset listDatasetById(Integer id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("O atributo nome não pode estar vazio!");
+        }
+
+        Dataset dataset = datasetDao.getDatasetById(id, true);
 
         if (dataset == null) {
             throw new NoSuchElementException("O nome do dataset não foi encontrado!");
@@ -74,7 +89,7 @@ public class DatasetService {
         datasetDao.desactiveDataset(id, false);
     }
 
-    public void updateDatset(Dataset dataset) {
+    public Dataset updateDatset(Dataset dataset) {
         if (dataset == null) {
             throw new IllegalArgumentException("O objeto dataset não pode estar vazio!");
         }
@@ -92,5 +107,12 @@ public class DatasetService {
         }
 
         datasetDao.updateDataset(dataset);
+        
+        Dataset newDataset = this.listDatasetById(dataset.getId());
+        if (newDataset == null) {
+            throw new NoSuchElementException("Não existe nenhum dataset com esse ID");
+        }
+
+        return newDataset;
     }
 }

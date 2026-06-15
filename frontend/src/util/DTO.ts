@@ -16,3 +16,16 @@ export interface Dataset {
 }
 
 export type DatasetPost = Omit<Dataset, 'id' | 'createdDate' | 'active'>
+
+export interface DataFont {
+    id: number,
+    name: string
+}
+
+export interface DataFontDataset {
+    id: number,
+    datasetId: number,
+    dataFontId: number
+}
+
+export type DataFontDatasetPost = Omit<DataFontDataset, 'id'>

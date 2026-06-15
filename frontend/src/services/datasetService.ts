@@ -6,8 +6,8 @@ export const getDatasets = async (userEmail: string): Promise<Dataset[]> => {
     return response.data;
 }
 
-export const getDatasetByName = async (datasetName: string): Promise<Dataset> => {
-    const response = await api.post("datasets/listarNome", {datasetName})
+export const getDatasetById = async (datasetId: number): Promise<Dataset> => {
+    const response = await api.post("datasets/listarNome", {datasetId})
     return response.data;
 }
 
@@ -18,4 +18,9 @@ export const createDataset = async (dataset: DatasetPost): Promise<Dataset> => {
 
 export const deleteDatasetById = async (id: number) => {
     await api.delete("datasets/excluir", {data: {id}});
+}
+
+export const updateDataset = async (dataset: Dataset): Promise<Dataset> => {
+    const response = await api.put("datasets/atualizar", dataset);
+    return response.data;
 }

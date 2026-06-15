@@ -10,6 +10,9 @@ public class Dataset {
     private String userCPF;
     private Boolean active;
 
+    // Idealmente deveria ser criado uma entidade DTO para essa classe a fim de trabalhar com esse atributo
+    private long totalSize;
+
     public int getId() {
         return this.id;
     }
@@ -57,4 +60,13 @@ public class Dataset {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public long getTotalSize() {
+        return this.totalSize;
+    }
+    
+    public void setTotalSize(long totalSize) {
+        this.totalSize = totalSize;
+    }
+
 }

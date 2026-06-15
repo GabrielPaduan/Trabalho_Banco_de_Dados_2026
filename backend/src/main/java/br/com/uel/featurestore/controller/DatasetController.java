@@ -40,10 +40,10 @@ public class DatasetController {
     }
 
     @PostMapping("/listarNome")
-    public ResponseEntity<?> listDatasetByName(@RequestBody Map<String, String> datasetName) {
+    public ResponseEntity<?> listDatasetById(@RequestBody Map<String, Integer> datasetId) {
         try {
-            String name = datasetName.get("datasetName");
-            Dataset dataset = datasetService.listDatasetByName(name);
+            Integer id = datasetId.get("datasetId");
+            Dataset dataset = datasetService.listDatasetById(id);
             return ResponseEntity.status(200).body(dataset);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -84,10 +84,10 @@ public class DatasetController {
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity<String> updateDataset(@RequestBody Dataset dataset) {
+    public ResponseEntity<?> updateDataset(@RequestBody Dataset dataset) {
         try {
-            datasetService.updateDatset(dataset);
-            return ResponseEntity.status(201).body("Dataset atualizado com sucesso!");
+            Dataset responseDataset = datasetService.updateDatset(dataset);
+            return ResponseEntity.status(201).body(responseDataset);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

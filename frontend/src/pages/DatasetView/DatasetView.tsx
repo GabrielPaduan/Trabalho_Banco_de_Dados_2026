@@ -4,22 +4,27 @@ import { useParams } from "react-router-dom";
 import { SideMenu } from "../../components/SideMenu";
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { useEffect, useState } from "react";
-import type { Dataset, User } from "../../util/DTO";
-import { getDatasetByName } from "../../services/datasetService";
+import type { DataFont, Dataset, User } from "../../util/DTO";
+import { getDatasetById, updateDataset } from "../../services/datasetService";
 import { useAuth } from "../../hooks/useAuth";
 import { getUserByEmail } from "../../services/userService";
 import { format } from "date-fns";
 import GenericForm from "../../components/GenericForm";
-import { Table } from "../../components/Table";
+import MultipleSelectChip from "../../components/MultipleSelectChip";
+import { getDataFonts } from "../../services/dataFontService";
+import { getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
 
 export function DatasetView() {
-    const { name } = useParams();
+    const { id } = useParams();
     const [dataset, setDataset] = useState<Dataset>();
     const [datasetUpdates, setDatasetUpdates] = useState<Dataset>();
     const [pageValue, setPageValue] = useState("1");
     const [user, setUser] = useState<User>();
     const { loggedUser } = useAuth();
     const [error, setError] = useState("");
+    const [dataFont, setDataFont] = useState<DataFont[]>([]);
+    const [selectedFontsIds, setSelectedFontsIds] = useState<number[]>([]);
+    const [selectedFonts, setSelectedFonts] = useState<DataFont[]>([]);
 
     function handleChangeTab(event: React.SyntheticEvent, newValue: string) {
         setPageValue(newValue);
@@ -28,21 +33,27 @@ export function DatasetView() {
     useEffect(() => {
         const fetchDataset = async () => {
             try {
-                if (name == undefined) {
-                    console.log("Nome está inválido!");
+                if (id == undefined) {
+                    console.log("Id está inválido!");
                     return;
                 }
                 if (loggedUser?.sub == undefined) {
                     console.log("Usuário está inválido!");
                     return;
                 }
-                const [responseDataset, responseUser ] = await Promise.all([
-                    getDatasetByName(name),
-                    getUserByEmail(loggedUser?.sub)
+                const [responseDataset, responseUser, responseDataFont ] = await Promise.all([
+                    getDatasetById(parseInt(id)),
+                    getUserByEmail(loggedUser?.sub),
+                    getDataFonts()
                 ]) 
                 setDataset(responseDataset);
                 setDatasetUpdates(responseDataset);
                 setUser(responseUser);
+                setDataFont(responseDataFont);
+
+                const responseDataFontDataset = await getDataFontsDatasetByDataset(responseDataset.id);
+                const idsFontes = responseDataFontDataset.map((relacao) => relacao.dataFontId);
+                setSelectedFontsIds(idsFontes);
             } catch (err: any) {
                 if (err.response && err.response.data) {
                     console.log("Err: " + err.response.data);
@@ -52,7 +63,22 @@ export function DatasetView() {
             }
         }
         fetchDataset();
-    }, []);
+    }, [id, loggedUser?.sub]);
+
+    const updateDatasetInfo = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            const datasetReponse = await updateDataset(datasetUpdates as Dataset);
+            setDataset(datasetReponse);
+            setDatasetUpdates(datasetReponse);
+        } catch (err: any) {
+            if (err?.response.data) {
+                console.log("Erro: " + err?.response.data);
+            } else {
+                console.log("Erro na comunicação com o servidor!");
+            }
+        }
+    }
 
     return (
         <>
@@ -88,7 +114,11 @@ export function DatasetView() {
                                         </Box>
                                         <Box>
                                             <Typography>Data de Criação</Typography>
-                                            <Typography>{format(dataset?.createdDate, "dd/MM/yyyy")}</Typography>
+                                            <Typography>
+                                                {dataset?.createdDate 
+                                                ? format(new Date(dataset.createdDate), "dd/MM/yyyy") 
+                                                : "Data indisponível"}
+                                            </Typography>
                                         </Box>
                                         <Box>
                                             <Typography>Tamanho Total</Typography>
@@ -123,29 +153,37 @@ export function DatasetView() {
                                     </Box>
                                     <TabPanel value={"1"}>Tab 1</TabPanel>
                                     <TabPanel value={"2"} sx={{ paddingTop: 2 }}>
-                                        <Container component={"section"} disableGutters sx={{ display: "flex", justifyContent: "space-between", padding: 1, border: "1px solid lightgray", borderRadius: "10px" }} maxWidth={false}>
-                                            <Container component={"article"} sx={{ borderRight: "1px solid lightgray", width: "40%" }}>
-                                                <GenericForm
-                                                    title="Informações Gerais"
-                                                    buttonText="Salvar Alterações"
-                                                    error={error}
-                                                    onSubmit={() => {}}
-                                                >
-                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                                                        <TextField label="Nome: " value={datasetUpdates?.name} onChange={(e) => setDataset(prev =>({...prev, name: e.target.value}) as Dataset)} required fullWidth/>
-                                                    
-                                                        <TextField slotProps={{
-                                                            htmlInput: { maxLength: 255 }
-                                                            }} multiline rows={4} helperText={`${datasetUpdates?.description?.length || 0}/255 caracteres`} label="Descrição: " value={datasetUpdates?.description} onChange={(e) => setDatasetUpdates(prev =>({...prev, description: e.target.value}) as Dataset)} required fullWidth
-                                                        />
-                                                    </Box>
-                                                </GenericForm>
-                                            </Container>
-                                            <Container component={"article"} sx={{ width: "60%" }}>
-                                                <Table
-                                                    title="Schema de Metadados"
-                                                />
-                                            </Container>
+                                        <Container component={"article"} sx={{ borderRight: "1px solid lightgray", width: "100%" }}>
+                                            <GenericForm
+                                                title="Informações Gerais"
+                                                buttonText="Salvar Alterações"
+                                                error={error}
+                                                onSubmit={updateDatasetInfo}
+                                            >
+                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                                    <Grid container rowSpacing={2} columnSpacing={2}>
+                                                        <Grid size={12}>
+                                                            <TextField label="Nome: " value={datasetUpdates?.name} onChange={(e) => setDatasetUpdates(prev =>({...prev, name: e.target.value}) as Dataset)} required fullWidth/>  
+                                                        </Grid>
+                                                        <Grid size={6}>
+                                                            <MultipleSelectChip 
+                                                                dataFont={dataFont ?? []}
+                                                                selectedFontsIds={selectedFontsIds}
+                                                                onChange={setSelectedFontsIds}
+                                                            />
+                                                        </Grid>
+                                                        <Grid size={6}>
+                                                            <TextField label="Data de criação: " value={datasetUpdates?.createdDate} disabled required fullWidth/>
+                                                        </Grid>
+                                                         <Grid size={12}>
+                                                            <TextField slotProps={{
+                                                                htmlInput: { maxLength: 255 }
+                                                                }} multiline rows={4} helperText={`${datasetUpdates?.description?.length || 0}/255 caracteres`} label="Descrição: " value={datasetUpdates?.description} onChange={(e) => setDatasetUpdates(prev =>({...prev, description: e.target.value}) as Dataset)} required fullWidth
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                </Box>
+                                            </GenericForm>
                                         </Container>
                                     </TabPanel>
                                 </TabContext>

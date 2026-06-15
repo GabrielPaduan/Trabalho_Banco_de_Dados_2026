@@ -10,14 +10,13 @@ interface DatasetCardsProps {
     deleteModal: () => void,
     active: boolean,
     navigate: () => void,
-    minWidthPersonal: string
 }
 
-export function DatasetCard({title, desc, createdDate, active, deleteModal, navigate, minWidthPersonal} : DatasetCardsProps) {
+export function DatasetCard({title, desc, createdDate, active, deleteModal, navigate} : DatasetCardsProps) {
     return (
-        <Card sx={{ minWidth: {minWidthPersonal},  ":hover": {boxShadow: "3px 3px 3px lightgray, -3px 3px 3px lightgray"} }}>
+        <Card sx={{ minWidth: "300px",  ":hover": {boxShadow: "3px 3px 3px lightgray, -3px 3px 3px lightgray"} }}>
             <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
                     <Typography sx={{ fontSize: "16px" }}>{title}</Typography>
                     {active &&
                         <Typography sx={{ fontSize: "12px", backgroundColor: "#B3FFF3", borderRadius: "10%", padding: "5px 10px" }}>Ativo</Typography>
