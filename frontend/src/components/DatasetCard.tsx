@@ -8,12 +8,14 @@ interface DatasetCardsProps {
     desc: string,
     createdDate: string,
     deleteModal: () => void,
-    active: boolean
+    active: boolean,
+    navigate: () => void,
+    minWidthPersonal: string
 }
 
-export function DatasetCard({title, desc, createdDate, active, deleteModal} : DatasetCardsProps) {
+export function DatasetCard({title, desc, createdDate, active, deleteModal, navigate, minWidthPersonal} : DatasetCardsProps) {
     return (
-        <Card sx={{ minWidth: "240px",  ":hover": {boxShadow: "3px 3px 3px lightgray, -3px 3px 3px lightgray"}, cursor: "pointer" }}>
+        <Card sx={{ minWidth: {minWidthPersonal},  ":hover": {boxShadow: "3px 3px 3px lightgray, -3px 3px 3px lightgray"} }}>
             <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Typography sx={{ fontSize: "16px" }}>{title}</Typography>
@@ -31,7 +33,7 @@ export function DatasetCard({title, desc, createdDate, active, deleteModal} : Da
                 <Typography>{format(createdDate, "dd/MM/yyyy")}</Typography>
                 {/* Colocar ícone */}
                 <Box sx={{ display: "flex" }}>
-                    <Button sx={{ fontSize: "12px", ":hover": {backgroundColor: "lightgray"} }}>Acesse</Button>
+                    <Button sx={{ fontSize: "12px", ":hover": {backgroundColor: "lightgray"} }} onClick={navigate}>Acesse</Button>
                     <Button sx={{ fontSize: "12px", minWidth: "auto", ":hover": {backgroundColor: "lightgray"} }} onClick={deleteModal}><DeleteIcon sx={{ color: "error" }}/></Button>
                 </Box>
             </CardActions>

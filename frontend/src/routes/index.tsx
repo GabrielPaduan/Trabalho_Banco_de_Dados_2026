@@ -4,6 +4,7 @@ import CreateUser from "../pages/CreateUser/CreateUser"
 import { ProtectedRoutes } from "../components/ProtectedRoutes"
 import { Dashboard } from "../pages/Dashboard/Dashboard"
 import { UpdateUser } from "../pages/UpdateUser/UpdateUser"
+import { DatasetView } from "../pages/DatasetView/DatasetView"
 
 export const AppRoutes = () => {
     return (
@@ -14,6 +15,7 @@ export const AppRoutes = () => {
             <Route element={<ProtectedRoutes />}>
                 <Route path="/perfil" element={<UpdateUser />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dataset/:name" element={<DatasetView />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/login"/>} />

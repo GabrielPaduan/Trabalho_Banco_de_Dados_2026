@@ -6,6 +6,7 @@ import type { Dataset, DatasetPost } from "../util/DTO";
 import { createDataset, getDatasets, deleteDatasetById } from "../services/datasetService";
 import { ConfirmModal } from "./Modal";
 import { getUserByEmail } from "../services/userService";
+import { useNavigate } from "react-router-dom";
 
 export function DatasetCards() {
     const [datasets, setDatasets] = useState<Dataset[]>();
@@ -18,6 +19,11 @@ export function DatasetCards() {
     const [ createModalStatus, setCreateModalStatus ] = useState<boolean>(false);
     const [ deleteModalStatus, setDeleteModalStatus ] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<number>();
+    const navigate = useNavigate();
+
+    const handleNavigate = (name: String) => {
+        navigate(`/dataset/${name}`);
+    }
 
     const handleOpenCreateModal = () => {
         setCreateModalStatus(true);
@@ -144,6 +150,8 @@ export function DatasetCards() {
                                 active={dataset.active}
                                 deleteModal={() => handleOpenDeleteModal(dataset.id)}
                                 key={dataset.id}
+                                navigate={() => handleNavigate(dataset.name)}
+                                minWidthPersonal="240px"
                             />
                         )) 
                     ) : ( 
