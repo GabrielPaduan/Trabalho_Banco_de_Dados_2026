@@ -31,3 +31,20 @@ export interface DataFontDataset {
 }
 
 export type DataFontDatasetPost = Omit<DataFontDataset, 'id'>
+
+export interface Version {
+    id: number,
+    archivePath: String,
+    numVersion: String,
+    createdDate: Date,
+    datasetId: number,
+    baseVersionId: number
+}
+
+export interface Feature {
+    id: number,
+    name: String,
+    dataType: String,
+    description: String,
+    versionId: number
+}

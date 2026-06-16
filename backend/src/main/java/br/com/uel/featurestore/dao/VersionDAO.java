@@ -16,9 +16,10 @@ public class VersionDAO {
     }
 
     public void createVersion(Version versionData) {
+        Integer idVersaoBaseParaOBanco = (versionData.getBaseVersionId() == 0) ? null : versionData.getBaseVersionId();
         String sqlQuery = "INSERT INTO feature_store.versao (arquivo_path, numero_versao, data_inclusao, id_dataset, id_versao_base) VALUES (?, ?, CURRENT_DATE, ?, ?)";
         
-        jdbcTemplate.update(sqlQuery, versionData.getArchivePath(), versionData.getNumVersion(), versionData.getDatasetId(), versionData.getBaseVersionId());
+        jdbcTemplate.update(sqlQuery, versionData.getArchivePath(), versionData.getNumVersion(), versionData.getDatasetId(), idVersaoBaseParaOBanco);
     }
 
     public Version getVersionById(int versionId) {
@@ -38,7 +39,7 @@ public class VersionDAO {
     }
 
     public List<Version> getVersionByDataset(int datasetId) {
-        String sqlQuery = "SELECT * FROM feature_store.versao WHERE id_dataset = ?";
+        String sqlQuery = "SELECT * FROM feature_store.versao WHERE id_dataset = ? ORDER BY numero_versao DESC";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
             Version newVersion = new Version();
             newVersion.setId(rs.getInt("id"));

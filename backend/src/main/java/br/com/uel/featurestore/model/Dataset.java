@@ -11,7 +11,7 @@ public class Dataset {
     private Boolean active;
 
     // Idealmente deveria ser criado uma entidade DTO para essa classe a fim de trabalhar com esse atributo
-    private long totalSize;
+    private Double totalSize;
 
     public int getId() {
         return this.id;
@@ -61,11 +61,11 @@ public class Dataset {
         this.active = active;
     }
 
-    public long getTotalSize() {
+    public Double getTotalSize() {
         return this.totalSize;
     }
     
-    public void setTotalSize(long totalSize) {
+    public void setTotalSize(Double totalSize) {
         this.totalSize = totalSize;
     }
 

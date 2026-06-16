@@ -7,16 +7,16 @@ export const doLogin = async (email: string, password: string) => {
 }
 
 export const createUser = async (user: User) => {
-    const response = await api.post("/usuarios/cadastrar", user);
+    const response = await api.post("/usuarios", user);
     return response;
 }
 
 export const updateUser = async (user: User) => {
-    const response = await api.put("/usuarios/atualizar", user);
+    const response = await api.put("/usuarios/", user);
     return response;
 }
 
 export const getUserByEmail = async (email: string): Promise<User> => {
-    const response = await api.post("/usuarios/listar/pessoa", {email});
+    const response = await api.get(`/usuarios/${email}`);
     return response.data;
 }

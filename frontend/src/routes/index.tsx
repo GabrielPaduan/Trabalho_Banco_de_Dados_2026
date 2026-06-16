@@ -5,6 +5,7 @@ import { ProtectedRoutes } from "../components/ProtectedRoutes"
 import { Dashboard } from "../pages/Dashboard/Dashboard"
 import { UpdateUser } from "../pages/UpdateUser/UpdateUser"
 import { DatasetView } from "../pages/DatasetView/DatasetView"
+import { VersionView } from "../pages/VersionView/VersionView"
 
 export const AppRoutes = () => {
     return (
@@ -16,6 +17,7 @@ export const AppRoutes = () => {
                 <Route path="/perfil" element={<UpdateUser />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dataset/:id" element={<DatasetView />} />
+                <Route path="/version/:id" element={<VersionView />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/login"/>} />

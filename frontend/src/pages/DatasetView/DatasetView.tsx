@@ -1,10 +1,10 @@
 import { Box, Button, Container, Grid, Tab, TextField, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SideMenu } from "../../components/SideMenu";
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { useEffect, useState } from "react";
-import type { DataFont, Dataset, User } from "../../util/DTO";
+import type { DataFont, Dataset, User, Version } from "../../util/DTO";
 import { getDatasetById, updateDataset } from "../../services/datasetService";
 import { useAuth } from "../../hooks/useAuth";
 import { getUserByEmail } from "../../services/userService";
@@ -13,6 +13,9 @@ import GenericForm from "../../components/GenericForm";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 import { getDataFonts } from "../../services/dataFontService";
 import { createRelationDataFontDataset, getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
+import GenericTable from "../../components/GenericTable";
+import { createVersion, getVersionByDatasetId } from "../../services/versionsService";
+import { ConfirmModal } from "../../components/Modal";
 
 export function DatasetView() {
     const { id } = useParams();
@@ -24,7 +27,11 @@ export function DatasetView() {
     const [error, setError] = useState("");
     const [dataFont, setDataFont] = useState<DataFont[]>([]);
     const [selectedFontsIds, setSelectedFontsIds] = useState<number[]>([]);
-    const [selectedFonts, setSelectedFonts] = useState<DataFont[]>([]);
+    const [versionsList, setVersionsList] = useState<Version[]>([]);
+    const [version, setVersion] = useState<Version>();
+    const [modalStatusVersion, setModalStatusVersion] = useState<boolean>();
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const navigate = useNavigate();
 
     function handleChangeTab(event: React.SyntheticEvent, newValue: string) {
         setPageValue(newValue);
@@ -41,15 +48,17 @@ export function DatasetView() {
                     console.log("Usuário está inválido!");
                     return;
                 }
-                const [responseDataset, responseUser, responseDataFont ] = await Promise.all([
+                const [responseDataset, responseUser, responseDataFont, responseVersions ] = await Promise.all([
                     getDatasetById(parseInt(id)),
                     getUserByEmail(loggedUser?.sub),
-                    getDataFonts()
+                    getDataFonts(),
+                    getVersionByDatasetId(id)
                 ]) 
                 setDataset(responseDataset);
                 setDatasetUpdates(responseDataset);
                 setUser(responseUser);
                 setDataFont(responseDataFont);
+                setVersionsList(responseVersions);
 
                 const responseDataFontDataset = await getDataFontsDatasetByDataset(responseDataset.id);
                 const idsFontes = responseDataFontDataset.map((relacao) => relacao.dataFontId);
@@ -64,6 +73,33 @@ export function DatasetView() {
         }
         fetchDataset();
     }, [id, loggedUser?.sub]);
+
+    const createVersionSubmit = async () => {
+        try {
+            if (!selectedFile) {
+                alert("Por favor, selecione um arquivo.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("datasetId", String(id));
+            formData.append("archivePath", selectedFile);
+            
+            const newVersion: Version = await createVersion(formData);
+            
+            setVersionsList((prev) => [newVersion, ...prev]);
+            
+            setSelectedFile(null);
+            handleCloseVersionModal();
+            navigate(`/version/${newVersion.id}`)
+        } catch (err: any) {
+            if (err?.response?.data) {
+                console.error(err?.response.data);
+            } else {
+                console.error("Erro");
+            }
+        }
+    }
 
     const updateDatasetInfo = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -85,6 +121,14 @@ export function DatasetView() {
         }
     }
 
+    const handleOpenVersionModal = () => {
+        setModalStatusVersion(true);
+    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    const handleCloseVersionModal = () => {
+        setModalStatusVersion(false);
+    }
+
     return (
         <>
             <DefaultHeader />
@@ -97,6 +141,35 @@ export function DatasetView() {
                             { pageValue.localeCompare("2") ? (
                                 <Container component={"article"} sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }}>
                                     {/* Parte de cima */}
+                                    <ConfirmModal
+                                        title= "Criar Versão"
+                                        buttonText= "Criar"
+                                        fetchFunc = {createVersionSubmit}
+                                        data = {version || ({} as Version)}
+                                        modalStatus = {modalStatusVersion as boolean}
+                                        handleClose ={handleCloseVersionModal}
+                                    >
+                                        <TextField 
+                                            type="file" 
+                                            label="Arquivo: " 
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                if (e.target.files && e.target.files.length > 0) {
+                                                    setSelectedFile(e.target.files[0]); 
+                                                }
+                                            }} 
+                                            slotProps={{
+                                                inputLabel: { 
+                                                    shrink: true 
+                                                },
+                                                htmlInput: { 
+                                                    accept: ".csv, .json, .parquet" 
+                                                }
+                                            }}
+                                            fullWidth 
+                                            required
+                                        />
+                                    </ConfirmModal>
+
                                     <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignContent: "center", gap: 2, paddingBottom: 2 }}>
                                         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                             <Box sx={{ display: "flex", gap: 2, alignContent: "center"}}>
@@ -107,7 +180,7 @@ export function DatasetView() {
                                                 <Typography>{dataset?.description}</Typography>
                                             </Box>
                                         </Box>
-                                        <Button variant="contained" onClick={() => {}}>
+                                        <Button variant="contained" onClick={handleOpenVersionModal}>
                                             Criar Nova Versão
                                         </Button>
                                     </Box>
@@ -156,7 +229,10 @@ export function DatasetView() {
                                             <Tab label="Configurações" value="2" />
                                         </TabList>
                                     </Box>
-                                    <TabPanel value={"1"}>Tab 1</TabPanel>
+                                    <TabPanel value={"1"}>
+                                        <GenericTable listVersion={versionsList}/>
+
+                                    </TabPanel>
                                     <TabPanel value={"2"} sx={{ paddingTop: 2 }}>
                                         <Container component={"article"} sx={{ borderRight: "1px solid lightgray", width: "100%" }}>
                                             <GenericForm

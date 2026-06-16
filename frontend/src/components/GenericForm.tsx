@@ -8,7 +8,7 @@ interface FormularioUserProps {
     children: React.ReactNode;
 }
 
-export default function UserForm({
+export default function GenericForm({
     title, buttonText, error, onSubmit, children
 }: FormularioUserProps) {
     return (
