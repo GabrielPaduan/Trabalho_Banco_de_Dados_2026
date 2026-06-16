@@ -1,5 +1,5 @@
-INSERT INTO feature_store.usuario (cpf, nome, email, senha, data_criacao) VALUES ('12345678910', 'Gabriel', 'gabriel@email', '123', CURRENT_DATE);
-INSERT INTO feature_store.usuario (cpf, nome, email, senha, data_criacao) VALUES ('98765432101', 'Bianca', 'bianca@email', '4567', CURRENT_DATE);
+INSERT INTO feature_store.usuario (cpf, nome, email, senha_hash, data_criacao) VALUES ('12345678910', 'Gabriel', 'gabriel@email', '123', CURRENT_DATE);
+INSERT INTO feature_store.usuario (cpf, nome, email, senha_hash, data_criacao) VALUES ('98765432101', 'Bianca', 'bianca@email', '4567', CURRENT_DATE);
 
 INSERT INTO feature_store.dataset (nome, descricao, data_criacao, cpf_usuario) VALUES ('R.U', 'Dataset com o histórico do movimento diário do R.U', CURRENT_DATE, '12345678910');
 
