@@ -56,7 +56,9 @@ export default function GenericTable(
           </TableRow>
         </TableHead>
         <TableBody>
-          { listVersion.map((version) => (
+          { [...listVersion].sort((a, b) => {
+            return String(b.numVersion).localeCompare(String(a.numVersion), undefined, {numeric: true})
+          }).map((version) => (
             <TableRow
               key={version.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

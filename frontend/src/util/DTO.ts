@@ -48,3 +48,5 @@ export interface Feature {
     description: String,
     versionId: number
 }
+
+export type FeaturePost = Omit<Feature, 'id'>

@@ -22,8 +22,9 @@ public class FeatureController {
     @PostMapping
     public ResponseEntity<?> createFeature(@RequestBody Feature featureData) {
         try {
-            featureService.createFeature(featureData);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Feature criada com sucesso!");
+            Feature feature = featureService.createFeature(featureData);
+            System.out.println("Entre no Controller 2" + feature);
+            return ResponseEntity.status(HttpStatus.CREATED).body(feature);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {

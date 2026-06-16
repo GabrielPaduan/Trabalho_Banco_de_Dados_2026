@@ -2,7 +2,7 @@ import { Box, Button, Container, Grid, Tab, TextField, Typography } from "@mui/m
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { SideMenu } from "../../components/SideMenu";
 import { ConfirmModal } from "../../components/Modal";
-import type { Dataset, Feature, User, Version } from "../../util/DTO";
+import type { Dataset, Feature, FeaturePost, User, Version } from "../../util/DTO";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
@@ -11,7 +11,7 @@ import { getDatasetById } from "../../services/datasetService";
 import { getUserByEmail } from "../../services/userService";
 import { format } from "date-fns";
 import DownloadIcon from '@mui/icons-material/Download';
-import { getFeatureById, getFeaturesByVersionId, updateFeature } from "../../services/FeatureService";
+import { createFeature, getFeatureById, getFeaturesByVersionId, updateFeature } from "../../services/FeatureService";
 import GenericForm from "../../components/GenericForm";
 
 export function VersionView() {
@@ -122,6 +122,30 @@ export function VersionView() {
         }
     };
 
+    const handleCreateFeature = async () => {
+        try {
+            if (feature == undefined) {
+                console.error("Feature vazia!");
+                return;
+            } 
+            const featurePost: FeaturePost = {
+                name: feature.name,
+                dataType: feature.dataType,
+                description: feature.description,
+                versionId: Number(id)
+            }
+            const newFeature = await createFeature(featurePost);
+            setListFeature((prev) => ([...(prev || []), newFeature]));
+            handleCloseCreateFeatureModal();
+        } catch (err: any) {
+            if (err?.response) {
+                console.error(err?.response.data);
+            } else {
+                console.error("Erro na comunicação com o servidor!")
+            }
+        }
+    }
+
     return (
         <>
             <DefaultHeader />
@@ -136,12 +160,37 @@ export function VersionView() {
                                 <ConfirmModal
                                     title= "Criar Feature"
                                     buttonText= "Criar"
-                                    fetchFunc = {() => {}}
+                                    fetchFunc = {handleCreateFeature}
                                     data = {feature || ({} as Feature)}
                                     modalStatus = {modalStatusCreateFeature as boolean}
                                     handleClose ={handleCloseCreateFeatureModal}
                                 >
-                                    <Typography>Em desenvolvimento</Typography>
+                                    <TextField 
+                                        name="name" 
+                                        label="Nome da Feature" 
+                                        defaultValue={feature?.name} 
+                                        onChange={(e) => setFeature((prev) => ({...prev, name: e.target.value}) as Feature)}
+                                        size="small"
+                                        sx={{ flex: 1 }}
+                                    />
+                                    
+                                    <TextField 
+                                        name="dataType" 
+                                        label="Tipo de Dado" 
+                                        defaultValue={feature?.dataType} 
+                                        onChange={(e) => setFeature((prev) => ({...prev, dataType: e.target.value}) as Feature)}
+                                        size="small"
+                                        sx={{ width: "150px" }} 
+                                    />
+                                    
+                                    <TextField 
+                                        name="description" 
+                                        label="Descrição / Significado" 
+                                        defaultValue={feature?.description}
+                                        onChange={(e) => setFeature((prev) => ({...prev, description: e.target.value}) as Feature)} 
+                                        size="small"
+                                        sx={{ flex: 2 }}
+                                    />
                                 </ConfirmModal>
 
                                 <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignContent: "center", gap: 2, paddingBottom: 2 }}>
@@ -174,10 +223,10 @@ export function VersionView() {
                                             : "Data indisponível"}
                                         </Typography>
                                     </Box>
-                                    <Box>
+                                    {/* <Box>
                                         <Typography>Tamanho</Typography>
                                         <Typography>Implementando...</Typography>
-                                    </Box>
+                                    </Box> */}
                                     <Box>
                                         <Typography>Download</Typography>
                                         <Button onClick={() => handleDownload(version.id, version.numVersion as string)}><DownloadIcon /></Button>
@@ -227,15 +276,14 @@ export function VersionView() {
                                                     label="Descrição / Significado" 
                                                     defaultValue={feat.description} 
                                                     size="small"
-                                                    // Removido o multiline para manter a linha fina, mas você pode voltar se quiser!
-                                                    sx={{ flex: 2 }} // Ocupa o dobro de espaço em relação ao Nome, já que descrições são maiores
+                                                    sx={{ flex: 2 }}
                                                 />
                                                 
                                                 <Button 
                                                     type="submit" 
                                                     variant="contained" 
                                                     size="small" 
-                                                    sx={{ whiteSpace: "nowrap" }} // Impede que o texto do botão quebre em duas linhas
+                                                    sx={{ whiteSpace: "nowrap" }}
                                                 >
                                                     Atualizar
                                                 </Button>

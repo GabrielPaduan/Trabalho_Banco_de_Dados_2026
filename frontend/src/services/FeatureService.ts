@@ -1,7 +1,7 @@
-import type { Feature } from "../util/DTO";
+import type { Feature, FeaturePost } from "../util/DTO";
 import { api } from "./api";
 
-export const createFeature = async (featureData: Feature): Promise<string> => {
+export const createFeature = async (featureData: FeaturePost): Promise<Feature> => {
     const response = await api.post("/features", featureData);
     return response.data; 
 }
@@ -16,7 +16,7 @@ export const getFeatureById = async (id: number): Promise<Feature> => {
     return response.data; 
 }
 
-export const updateFeature = async (id: number, featureData: Feature): Promise<string> => {
+export const updateFeature = async (id: number, featureData: Feature): Promise<Feature> => {
     const response = await api.put(`/features/${id}`, featureData);
     return response.data; 
 }

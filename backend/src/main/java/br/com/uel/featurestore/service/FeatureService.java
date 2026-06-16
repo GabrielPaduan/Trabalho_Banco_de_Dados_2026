@@ -22,11 +22,13 @@ public class FeatureService {
         this.featureDAO = featureDAO;
     }
 
-    public void createFeature(Feature featureData) {
+    public Feature createFeature(Feature featureData) {
         if (featureData.getName() == null || featureData.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("O nome da feature não pode ser vazio!");
         }
-        featureDAO.insertNewFeature(featureData);
+        Feature feature = featureDAO.insertNewFeature(featureData);
+        System.out.println("Retorno service: " + feature);
+        return feature;
     }
 
     public void extractAndSaveFeaturesFromCSV(int idVersao, String arquivoPath) {

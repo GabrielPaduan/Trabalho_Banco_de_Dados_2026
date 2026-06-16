@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/redefinir-senha").permitAll()
                 // Qualquer outra rota posterior será acessada apenas a partir do login
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             );
             // .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

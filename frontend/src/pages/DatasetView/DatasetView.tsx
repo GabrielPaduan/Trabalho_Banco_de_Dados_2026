@@ -198,10 +198,10 @@ export function DatasetView() {
                                                 : "Data indisponível"}
                                             </Typography>
                                         </Box>
-                                        <Box>
+                                        {/* <Box>
                                             <Typography>Tamanho Total</Typography>
                                             <Typography>Implementando...</Typography>
-                                        </Box>
+                                        </Box> */}
                                     </Box>
                                 </Container>
                             ) : (
@@ -214,7 +214,7 @@ export function DatasetView() {
                                         </Box>
                                         <Box sx={{ display: "flex", gap: "5px", alignItens: "center", justifyContent: "center" }}>
                                             <Typography component={"h6"} variant="h6">Última versão: </Typography>
-                                            <Typography component={"span"}>Implementando...</Typography>
+                                            <Typography component={"span"}>{versionsList && versionsList.length > 0 ? versionsList[0].numVersion : "-"}</Typography>
                                         </Box>
                                     </Box>
                                 </Container>
@@ -231,7 +231,6 @@ export function DatasetView() {
                                     </Box>
                                     <TabPanel value={"1"}>
                                         <GenericTable listVersion={versionsList}/>
-
                                     </TabPanel>
                                     <TabPanel value={"2"} sx={{ paddingTop: 2 }}>
                                         <Container component={"article"} sx={{ borderRight: "1px solid lightgray", width: "100%" }}>
