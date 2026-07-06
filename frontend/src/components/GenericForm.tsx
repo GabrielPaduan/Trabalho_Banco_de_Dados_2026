@@ -12,7 +12,7 @@ export default function GenericForm({
     title, buttonText, error, onSubmit, children
 }: FormularioUserProps) {
     return (
-        <Box sx={{width:"100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+        <Box sx={{width:"100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
             <Typography component="h1" variant="h5">
                 {title}
             </Typography>

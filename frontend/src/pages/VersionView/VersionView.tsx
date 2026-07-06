@@ -1,18 +1,18 @@
-import { Box, Button, Container, Grid, Tab, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Icon, Tab, TextField, Typography } from "@mui/material";
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { SideMenu } from "../../components/SideMenu";
 import { ConfirmModal } from "../../components/Modal";
 import type { Dataset, Feature, FeaturePost, User, Version } from "../../util/DTO";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { downloadVersionFile, getBaseVersion, getVersionById } from "../../services/versionsService";
+import { downloadVersionFile, getVersionById } from "../../services/versionsService";
 import { getDatasetById } from "../../services/datasetService";
 import { getUserByEmail } from "../../services/userService";
 import { format } from "date-fns";
 import DownloadIcon from '@mui/icons-material/Download';
-import { createFeature, getFeatureById, getFeaturesByVersionId, updateFeature } from "../../services/FeatureService";
-import GenericForm from "../../components/GenericForm";
+import { createFeature, getFeaturesByVersionId, updateFeature } from "../../services/FeatureService";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 export function VersionView() {
     const { id } = useParams();
@@ -24,6 +24,7 @@ export function VersionView() {
     const [modalStatusCreateFeature, setModalStatusCreateFeature] = useState<boolean>(false);
     const [feature, setFeature] = useState<Feature>();
     const [listFeature, setListFeature] = useState<Feature[]>();
+    const navigate = useNavigate();
 
     const handleOpenCreateFeatureModal = () => {
         setModalStatusCreateFeature(true);
@@ -149,13 +150,16 @@ export function VersionView() {
     return (
         <>
             <DefaultHeader />
-            <Container component="main"  sx={{ display: "flex", justifyContent: "left", height: "80vh" }} maxWidth={false}>
+            <Container component="main"  sx={{ display: "flex", justifyContent: "left", maxHeight: "80vh" }} maxWidth={false}>
                 <SideMenu />
-                <Container component="section" disableGutters sx={{ width: "85%", padding: 2, display: "flex", flexDirection: "column", gap: 2 }} maxWidth={false}>
-                    <Typography component={"h2"} variant="h6">Visualizar Versão</Typography>
+                <Container component="section" disableGutters sx={{ width: "85%", padding: 2, display: "flex", flexDirection: "column", gap: 1 }} maxWidth={false}>
+                    <Box sx={{ display: "flex", justifyContent: "left", alignContent: "center", height: "10%" }}>
+                        <Button onClick={() => navigate(-1)}><ArrowBackIosIcon></ArrowBackIosIcon></Button>
+                        <Typography component={"h2"} variant="h6" sx={{ padding: "6px 8px" }}>Visualizar Versão</Typography>
+                    </Box>
                     {version && version !== undefined ? (
                         <>
-                            <Container component={"article"} sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }}>
+                            <Container component={"article"} sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px", height: "40%" }}>
                                 {/* Parte de cima */}
                                 <ConfirmModal
                                     title= "Criar Feature"
@@ -195,7 +199,7 @@ export function VersionView() {
 
                                 <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignContent: "center", gap: 2, paddingBottom: 2 }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                        <Box sx={{ display: "flex", gap: 2, alignContent: "center", flexDirection: "column", justifyContent: "center"}}>
+                                        <Box sx={{ display: "flex", gap: 0.5, alignContent: "center", flexDirection: "column", justifyContent: "center"}}>
                                             <Box sx={{ display: "flex", gap: 2, alignContent: "center" }}>
                                                 <Typography component="h2" variant="h6" sx={{ borderRight: "1px solid black", paddingRight: 2 }}>Versão Selecionada: {version?.numVersion}</Typography>
                                                 <Typography component="span" variant="h6">Versão Base: {baseVersion?.numVersion}</Typography>
@@ -223,23 +227,23 @@ export function VersionView() {
                                             : "Data indisponível"}
                                         </Typography>
                                     </Box>
-                                    {/* <Box>
-                                        <Typography>Tamanho</Typography>
-                                        <Typography>Implementando...</Typography>
-                                    </Box> */}
+                                    <Box>
+                                        <Typography>Tamanho da Versão</Typography>
+                                        <Typography>{version?.size ? (version?.size / 1024).toFixed(2) + " MB" : "Não determinado!"}</Typography>
+                                    </Box>
                                     <Box>
                                         <Typography>Download</Typography>
                                         <Button onClick={() => handleDownload(version.id, version.numVersion as string)}><DownloadIcon /></Button>
                                     </Box>
                                 </Box>
                             </Container>
-                            <Container component={"article"} disableGutters sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }} maxWidth={false}>
-                                <Typography component="h3" variant="h5" sx={{ marginBottom: 4 }}>
+                            <Container component={"article"} disableGutters sx={{ width: "100%", padding: 1.5, border: "1px solid lightgray", borderRadius: "10px", minHeight: 0, flex: 1, overflow: "hidden" }} maxWidth={false}>
+                                <Typography component="h3" variant="h5">
                                     Schema de Dados (Features)
                                 </Typography>
 
                                 {listFeature && listFeature.length > 0 ? (
-                                    <Box>
+                                    <Box sx={{ overflow: 'auto', height: "100%" }}>
                                         {listFeature.map((feat) => (
                                             <Box 
                                                 key={feat.id} 

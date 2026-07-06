@@ -2,7 +2,7 @@ import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 import { DatasetCard } from "./DatasetCard";
 import { useEffect, useState } from "react";
-import { type DataFontPost, type DataFont, type Dataset, type DatasetPost } from "../util/DTO";
+import { type DataFontPost, type DataFont, type Dataset, type DatasetPost, type AccessLogPost } from "../util/DTO";
 import { createDataset, getDatasets, deleteDatasetById } from "../services/datasetService";
 import { ConfirmModal } from "./Modal";
 import { getUserByEmail } from "../services/userService";
@@ -11,6 +11,7 @@ import { createDataFont, getDataFonts } from "../services/dataFontService";
 import MultipleSelectChip from "./MultipleSelectChip";
 import { createRelationDataFontDataset } from "../services/dataFontDatasetService";
 import { ChildModal } from "./ChildModal";
+import { createAccessLog } from "../services/accessLogService";
 
 export function DatasetCards() {
     const [datasets, setDatasets] = useState<Dataset[]>();
@@ -88,6 +89,16 @@ export function DatasetCards() {
         try {
             if (data !== null) {
                 const newDataset = await createDataset(data);
+                if (newDataset !== null && loggedUser?.sub !== undefined) {
+                    const accessLog: AccessLogPost = {
+                        userCPF: (loggedUser?.sub).toString(),
+                        operationType: 1,
+                        dateTime: new Date(),
+                        datasetID: newDataset.id
+                    } 
+
+                    await createAccessLog(accessLog)
+                }
                 setDatasets(datasets => [...(datasets || []), newDataset]);
                 
                 await Promise.all(selectedFontsIds.map((fontId) => {

@@ -27,7 +27,6 @@ public class FeatureService {
             throw new IllegalArgumentException("O nome da feature não pode ser vazio!");
         }
         Feature feature = featureDAO.insertNewFeature(featureData);
-        System.out.println("Retorno service: " + feature);
         return feature;
     }
 

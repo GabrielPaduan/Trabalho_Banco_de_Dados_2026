@@ -1,6 +1,7 @@
 package br.com.uel.featurestore.model;
 
 import java.util.Date;
+import java.math.BigInteger;
 
 public class Version {
     private int id;
@@ -9,6 +10,7 @@ public class Version {
     private Date createdDate;
     private int datasetId;
     private int baseVersionId;
+    private BigInteger size;
 
     public void setId(int id) {
         this.id = id;
@@ -56,5 +58,13 @@ public class Version {
 
     public int getBaseVersionId() {
         return this.baseVersionId;
+    }
+
+    public void setSize(BigInteger size) {
+        this.size = size;
+    }
+
+    public BigInteger getSize() {
+        return this.size;
     }
 }

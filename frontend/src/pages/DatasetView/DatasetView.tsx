@@ -134,12 +134,12 @@ export function DatasetView() {
             <DefaultHeader />
             <Container component="main"  sx={{ display: "flex", justifyContent: "left", height: "80vh" }} maxWidth={false}>
                 <SideMenu />
-                <Container component="section" disableGutters sx={{ width: "85%", padding: 2, display: "flex", flexDirection: "column", gap: 2 }} maxWidth={false}>
+                <Container component="section" disableGutters sx={{ width: "85%", padding: 2, display: "flex", flexDirection: "column", gap: 1 }} maxWidth={false}>
                     <Typography component={"h2"} variant="h6">Visualizar Dataset</Typography>
                     {dataset && dataset !== undefined ? (
                         <>
-                            { pageValue.localeCompare("2") ? (
-                                <Container component={"article"} sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }}>
+                            { pageValue !== "2" && (
+                                <Container component={"article"} sx={{ width: "100%", height: "40%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }}>
                                     {/* Parte de cima */}
                                     <ConfirmModal
                                         title= "Criar Versão"
@@ -170,10 +170,10 @@ export function DatasetView() {
                                         />
                                     </ConfirmModal>
 
-                                    <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignContent: "center", gap: 2, paddingBottom: 2 }}>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                    <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignContent: "center", gap: 1, paddingBottom: 2 }}>
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                                             <Box sx={{ display: "flex", gap: 2, alignContent: "center"}}>
-                                                <Typography component="h2" variant="h6">{dataset?.name}</Typography>
+                                                <Typography component="h2" variant="h6" sx={{ padding: "5px 0" }}>{dataset?.name}</Typography>
                                                 <Typography component="span" variant="h6" sx={{ backgroundColor: "#B3FFF3", borderRadius: "10%", padding: "5px 10px"}}>{dataset?.active ? "Ativo" : "Inativo"}</Typography>
                                             </Box>
                                             <Box>
@@ -185,7 +185,7 @@ export function DatasetView() {
                                         </Button>
                                     </Box>
                                     {/* Parte de baixo */}
-                                    <Box sx={{ width: "100%", display: "flex", gap: 4, paddingTop: 2 }}>
+                                    <Box sx={{ width: "100%", display: "flex", gap: 4, paddingTop: 1 }}>
                                         <Box>
                                             <Typography>Criador</Typography>
                                             <Typography>{user?.name}</Typography>
@@ -198,28 +198,14 @@ export function DatasetView() {
                                                 : "Data indisponível"}
                                             </Typography>
                                         </Box>
-                                        {/* <Box>
+                                        <Box>
                                             <Typography>Tamanho Total</Typography>
-                                            <Typography>Implementando...</Typography>
-                                        </Box> */}
-                                    </Box>
-                                </Container>
-                            ) : (
-                                <Container component={"article"} sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }}>
-                                    <Box sx={{ borderBottom: "1px solid lightgray", width: "100%", display: "flex", justifyContent: "space-between", alignItens: "center", gap: 2, paddingBottom: 2 }}>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                            <Box sx={{ display: "flex", gap: 2, alignItens: "center"}}>
-                                                <Typography component="h2" variant="h6">{dataset?.name}</Typography>
-                                            </Box>
-                                        </Box>
-                                        <Box sx={{ display: "flex", gap: "5px", alignItens: "center", justifyContent: "center" }}>
-                                            <Typography component={"h6"} variant="h6">Última versão: </Typography>
-                                            <Typography component={"span"}>{versionsList && versionsList.length > 0 ? versionsList[0].numVersion : "-"}</Typography>
+                                            <Typography>{ versionsList ? (versionsList.reduce((acumulator, version) => acumulator + version.size, 0) / 1024).toFixed(2) + " MB" : "Não determinado!" }</Typography>
                                         </Box>
                                     </Box>
                                 </Container>
                             )}
-                            <Container component={"article"} disableGutters sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px" }} maxWidth={false}>
+                            <Container component={"article"} disableGutters sx={{ width: "100%", padding: 2, border: "1px solid lightgray", borderRadius: "10px", display: "flex", flexDirection: "column", overflowY: "hidden" }} maxWidth={false}>
                                 <TabContext value={pageValue}>
                                     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                                         <TabList
@@ -229,36 +215,36 @@ export function DatasetView() {
                                             <Tab label="Configurações" value="2" />
                                         </TabList>
                                     </Box>
-                                    <TabPanel value={"1"}>
+                                    <TabPanel value={"1"} sx={{ height: "100%"}}>
                                         <GenericTable listVersion={versionsList}/>
                                     </TabPanel>
-                                    <TabPanel value={"2"} sx={{ paddingTop: 2 }}>
-                                        <Container component={"article"} sx={{ borderRight: "1px solid lightgray", width: "100%" }}>
+                                    <TabPanel value={"2"}  sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, p: 0, pt: 2 }} >
+                                        <Container component={"article"} sx={{ width: "100%" }}>
                                             <GenericForm
                                                 title="Informações Gerais"
                                                 buttonText="Salvar Alterações"
                                                 error={error}
                                                 onSubmit={updateDatasetInfo}
                                             >
-                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                                                     <Grid container rowSpacing={2} columnSpacing={2}>
-                                                        <Grid size={12}>
+                                                        <Grid size={4}>
                                                             <TextField label="Nome: " value={datasetUpdates?.name} onChange={(e) => setDatasetUpdates(prev =>({...prev, name: e.target.value}) as Dataset)} required fullWidth/>  
                                                         </Grid>
-                                                        <Grid size={6}>
+                                                        <Grid size={4}>
                                                             <MultipleSelectChip 
                                                                 dataFont={dataFont ?? []}
                                                                 selectedFontsIds={selectedFontsIds}
                                                                 onChange={setSelectedFontsIds}
                                                             />
                                                         </Grid>
-                                                        <Grid size={6}>
+                                                        <Grid size={4}>
                                                             <TextField label="Data de criação: " value={datasetUpdates?.createdDate} disabled required fullWidth/>
                                                         </Grid>
                                                          <Grid size={12}>
                                                             <TextField slotProps={{
                                                                 htmlInput: { maxLength: 255 }
-                                                                }} multiline rows={4} helperText={`${datasetUpdates?.description?.length || 0}/255 caracteres`} label="Descrição: " value={datasetUpdates?.description} onChange={(e) => setDatasetUpdates(prev =>({...prev, description: e.target.value}) as Dataset)} required fullWidth
+                                                                }} multiline rows={2} helperText={`${datasetUpdates?.description?.length || 0}/255 caracteres`} label="Descrição: " value={datasetUpdates?.description} onChange={(e) => setDatasetUpdates(prev =>({...prev, description: e.target.value}) as Dataset)} required fullWidth
                                                             />
                                                         </Grid>
                                                     </Grid>

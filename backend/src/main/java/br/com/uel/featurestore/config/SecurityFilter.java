@@ -16,6 +16,8 @@ import br.com.uel.featurestore.service.TokenService;
 import java.io.IOException;
 import java.util.Collections;
 
+import java.util.Enumeration;
+
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
@@ -27,8 +29,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        
+        System.out.println("doFIlterInternal before recoveryToken - SecurityFilter: " + request);
         String token = recoveryToken(request);
+        System.out.println("doFIlterInternal after recoveryToken - SecurityFilter: " + token);
         if (token != null) {
             try {
                 String email = tokenService.validateToken(token);
@@ -46,7 +49,17 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String recoveryToken(HttpServletRequest request) {
+        System.out.println("TENTANDO ACESSAR: " + request.getMethod() + " " + request.getRequestURI());
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            System.out.println(headerName + ": " + headerValue);
+        }
+
+
         String authHeader = request.getHeader("Authorization");
+        System.out.println("recoveryToken - SecurityFilter: " + authHeader);
         if (authHeader == null) {
             return null;
         }

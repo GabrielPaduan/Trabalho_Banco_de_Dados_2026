@@ -1,5 +1,6 @@
 package br.com.uel.featurestore.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,10 +17,11 @@ public class VersionDAO {
     }
 
     public void createVersion(Version versionData) {
+        System.out.println("Versão DAO: " + versionData);
         Integer idVersaoBaseParaOBanco = (versionData.getBaseVersionId() == 0) ? null : versionData.getBaseVersionId();
-        String sqlQuery = "INSERT INTO feature_store.versao (arquivo_path, numero_versao, data_inclusao, id_dataset, id_versao_base) VALUES (?, ?, CURRENT_DATE, ?, ?)";
+        String sqlQuery = "INSERT INTO feature_store.versao (arquivo_path, numero_versao, data_inclusao, id_dataset, id_versao_base, tamanho) VALUES (?, ?, CURRENT_DATE, ?, ?, ?)";
         
-        jdbcTemplate.update(sqlQuery, versionData.getArchivePath(), versionData.getNumVersion(), versionData.getDatasetId(), idVersaoBaseParaOBanco);
+        jdbcTemplate.update(sqlQuery, versionData.getArchivePath(), versionData.getNumVersion(), versionData.getDatasetId(), idVersaoBaseParaOBanco, versionData.getSize());
     }
 
     public Version getVersionById(int versionId) {
@@ -32,6 +34,7 @@ public class VersionDAO {
             newVersion.setCreatedDate(rs.getDate("data_inclusao"));
             newVersion.setDatasetId(rs.getInt("id_dataset"));
             newVersion.setBaseVersionId(rs.getInt("id_versao_base"));
+            newVersion.setSize(BigInteger.valueOf(rs.getInt("tamanho")));
             return newVersion;
         }, versionId);
 
@@ -48,6 +51,7 @@ public class VersionDAO {
             newVersion.setCreatedDate(rs.getDate("data_inclusao"));
             newVersion.setDatasetId(datasetId);
             newVersion.setBaseVersionId(rs.getInt("id_versao_base"));
+            newVersion.setSize(BigInteger.valueOf(rs.getInt("tamanho")));
             return newVersion;
         }, datasetId);
     }
@@ -62,6 +66,7 @@ public class VersionDAO {
             newVersion.setCreatedDate(rs.getDate("data_inclusao"));
             newVersion.setDatasetId(datasetId);
             newVersion.setBaseVersionId(rs.getInt("id_versao_base"));
+            newVersion.setSize(BigInteger.valueOf(rs.getInt("tamanho")));
             return newVersion;
         }, datasetId);
 
@@ -78,6 +83,7 @@ public class VersionDAO {
             newVersion.setCreatedDate(rs.getDate("data_inclusao"));
             newVersion.setDatasetId(datasetId);
             newVersion.setBaseVersionId(rs.getInt("id_versao_base"));
+            newVersion.setSize(BigInteger.valueOf(rs.getInt("tamanho")));
             return newVersion;
         }, datasetId);
     }
@@ -92,6 +98,7 @@ public class VersionDAO {
             newVersion.setCreatedDate(rs.getDate("data_inclusao"));
             newVersion.setDatasetId(rs.getInt("id_dataset"));
             newVersion.setBaseVersionId(baseVersionId);
+            newVersion.setSize(BigInteger.valueOf(rs.getInt("tamanho")));
             return newVersion;
         }, baseVersionId);
     }

@@ -1,4 +1,4 @@
-import { Container, Link, TextField } from "@mui/material";
+import { Container, Grid, Link, TextField } from "@mui/material";
 import FormularioUser from "../../components/GenericForm";
 import { useState } from "react";
 import type { User } from "../../util/DTO";
@@ -29,22 +29,31 @@ export default function CreateUser() {
 
     return (
         <>
-            <Container component={"main"} maxWidth="xs" sx={{ display: "flex", alignItems: "center", flexDirection: "column", height: '100vh', paddingTop: 5}}>
+            <Container component={"main"} maxWidth="xs" sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", height: '100vh', paddingTop: 5}}>
+                
                 <FormularioUser
                     title="Cadastro"
                     buttonText="Criar"
                     error = {error}
                     onSubmit={submitForm}
                 >
-                    <TextField label="CPF: " placeholder="ex. 000.000.000-00" required value={user?.cpf} onChange={(e) => setUser(prev => ({...prev, cpf: e.target.value} as User))} fullWidth/>
-
-                    <TextField label="Nome: " value={user?.name} onChange={(e) => setUser(prev =>({...prev, name: e.target.value}) as User)} required fullWidth/>
-                    
-                    <TextField label="Email: " placeholder="ex. exemplo@email.com" required value={user?.email} onChange={(e) => setUser(prev =>({...prev, email: e.target.value} as User))} fullWidth/>
-
-                    <TextField label="Senha: " type="password" value={user?.password} onChange={(e) => setUser(prev => ({...prev, password: e.target.value}) as User)} required fullWidth/>
+                    <Grid container rowSpacing={2} columnSpacing={2}>
+                        <Grid size={5}>
+                            <TextField label="CPF: " placeholder="ex. 000.000.000-00" required value={user?.cpf} onChange={(e) => setUser(prev => ({...prev, cpf: e.target.value} as User))} fullWidth/>
+                        </Grid>
+                        <Grid size={7}>
+                            <TextField label="Nome: " value={user?.name} onChange={(e) => setUser(prev =>({...prev, name: e.target.value}) as User)} required fullWidth/>
+                        </Grid>
+                        <Grid size={12}>
+                            <TextField label="Email: " placeholder="ex. exemplo@email.com" required value={user?.email} onChange={(e) => setUser(prev =>({...prev, email: e.target.value} as User))} fullWidth/>
+                        </Grid>
+                        <Grid size={12}>
+                            <TextField label="Senha: " type="password" value={user?.password} onChange={(e) => setUser(prev => ({...prev, password: e.target.value}) as User)} required fullWidth/>
+                        </Grid>
+                    </Grid>
                 </FormularioUser>
-                <Link component={"button"} variant="body2" onClick={() => navigate("/")} sx={{ width: "100%" }}>
+                
+                <Link component={"button"} variant="body2" onClick={() => navigate("/")} sx={{ width: "100%", paddingTop: 2 }}>
                     Já tem uma conta? Entre!
                 </Link>
             </Container>

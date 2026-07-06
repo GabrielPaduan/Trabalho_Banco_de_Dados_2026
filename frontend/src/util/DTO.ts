@@ -38,7 +38,8 @@ export interface Version {
     numVersion: String,
     createdDate: Date,
     datasetId: number,
-    baseVersionId: number
+    baseVersionId: number,
+    size: number
 }
 
 export interface Feature {
@@ -50,3 +51,13 @@ export interface Feature {
 }
 
 export type FeaturePost = Omit<Feature, 'id'>
+
+export interface AccessLog {
+    id: number,
+    operationType: number,
+    dateTime: Date,
+    userCPF: String,
+    datasetID: number
+}
+
+export type AccessLogPost = Omit<AccessLog, 'id'>

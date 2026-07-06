@@ -1,5 +1,6 @@
 package br.com.uel.featurestore.service;
 
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +41,8 @@ public class VersionService {
             if (!Files.exists(caminhoDiretorio)) {
                 Files.createDirectories(caminhoDiretorio);
             }
-
+            
+            
             String nomeOriginal = archivePath.getOriginalFilename();
             String extensao = "";
             if (nomeOriginal != null && nomeOriginal.contains(".")) {
@@ -52,7 +54,9 @@ public class VersionService {
             Path destinoFisicoCompleto = caminhoDiretorio.resolve(nomeSeguroUnico);
             Files.copy(archivePath.getInputStream(), destinoFisicoCompleto, StandardCopyOption.REPLACE_EXISTING);
 
+            BigInteger archiveSize = BigInteger.valueOf(Files.size(destinoFisicoCompleto));
             versionData.setArchivePath(destinoFisicoCompleto.toString());
+            versionData.setSize(archiveSize);
 
         } catch (Exception e) {
             throw new RuntimeException("Falha crítica interna ao gravar o arquivo físico no storage local", e);
