@@ -7,19 +7,25 @@ import org.springframework.stereotype.Service;
 
 import br.com.uel.featurestore.dao.AccessLogDAO;
 import br.com.uel.featurestore.model.AccessLog;
+import br.com.uel.featurestore.model.User;
 
 @Service
 public class AccessLogService {
     private final AccessLogDAO accessLogDAO;
+    private final UserService userService;
     
-    public AccessLogService(AccessLogDAO accessLogDAO) {
+    public AccessLogService(AccessLogDAO accessLogDAO, UserService userService) {
         this.accessLogDAO = accessLogDAO;
+        this.userService = userService;
     }
 
     public void create(AccessLog accessLog) {
         if (accessLog.getDateTime() == null) {
             accessLog.setDateTime(LocalDateTime.now());
         }
+        User user = userService.getUserByEmail(accessLog.getUserCPF());
+        accessLog.setUserCPF(user.getCpf());
+
         accessLogDAO.save(accessLog);
     }
 

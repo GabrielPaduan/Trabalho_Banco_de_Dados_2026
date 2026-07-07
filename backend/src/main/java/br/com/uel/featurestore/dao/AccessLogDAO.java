@@ -3,7 +3,6 @@ package br.com.uel.featurestore.dao;
 import br.com.uel.featurestore.model.AccessLog;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class AccessLogDAO {
     }
 
     public int save(AccessLog accessLog) {
-        String sql = "INSERT INTO access_log (operation_type, date_time, user_cpf, dataset_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO feature_store.log_acesso (tipo_operacao, data_hora, cpf_usuario, id_dataset) VALUES (?, ?, ?, ?)";
         return jdbcTemplate.update(sql,
                 accessLog.getOperationType(),
                 accessLog.getDateTime(),
@@ -27,17 +26,17 @@ public class AccessLogDAO {
     }
 
     public AccessLog findById(Integer id) {
-        String sql = "SELECT * FROM access_log WHERE id = ?";
+        String sql = "SELECT * FROM log_acesso WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 AccessLog log = new AccessLog();
                 log.setId(rs.getInt("id"));
-                log.setOperationType(rs.getInt("operation_type"));
-                if (rs.getTimestamp("date_time") != null) {
-                    log.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
+                log.setOperationType(rs.getInt("tipo_operacao"));
+                if (rs.getTimestamp("data_hora") != null) {
+                    log.setDateTime(rs.getTimestamp("data_hora").toLocalDateTime());
                 }              
-                log.setUserCPF(rs.getString("user_cpf"));
-                log.setDatasetID(rs.getInt("dataset_id"));
+                log.setUserCPF(rs.getString("cpf_usuario"));
+                log.setDatasetID(rs.getInt("id_dataset"));
                 return log;
             }, id);
         } catch (EmptyResultDataAccessException e) {
@@ -46,22 +45,22 @@ public class AccessLogDAO {
     }
 
     public List<AccessLog> findAll() {
-        String sql = "SELECT * FROM access_log";
+        String sql = "SELECT * FROM log_acesso";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             AccessLog log = new AccessLog();
             log.setId(rs.getInt("id"));
-            log.setOperationType(rs.getInt("operation_type"));
-            if (rs.getTimestamp("date_time") != null) {
-                log.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
+            log.setOperationType(rs.getInt("tipo_operacao"));
+            if (rs.getTimestamp("data_hora") != null) {
+                log.setDateTime(rs.getTimestamp("data_hora").toLocalDateTime());
             }              
-            log.setUserCPF(rs.getString("user_cpf"));
-            log.setDatasetID(rs.getInt("dataset_id"));
+            log.setUserCPF(rs.getString("cpf_usuario"));
+            log.setDatasetID(rs.getInt("id_dataset"));
             return log;
         });
     }
 
     public int update(AccessLog accessLog) {
-        String sql = "UPDATE access_log SET operation_type = ?, date_time = ?, user_cpf = ?, dataset_id = ? WHERE id = ?";
+        String sql = "UPDATE log_acesso SET tipo_operacao = ?, data_hora = ?, cpf_usuario = ?, id_dataset = ? WHERE id = ?";
         return jdbcTemplate.update(sql,
                 accessLog.getOperationType(),
                 accessLog.getDateTime(),
@@ -72,7 +71,7 @@ public class AccessLogDAO {
     }
 
     public int delete(Integer id) {
-        String sql = "DELETE FROM access_log WHERE id = ?";
+        String sql = "DELETE FROM log_acesso WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
 }

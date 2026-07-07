@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SideMenu } from "../../components/SideMenu";
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { useEffect, useState } from "react";
-import type { DataFont, Dataset, User, Version } from "../../util/DTO";
+import type { AccessLogPost, DataFont, Dataset, User, Version } from "../../util/DTO";
 import { getDatasetById, updateDataset } from "../../services/datasetService";
 import { useAuth } from "../../hooks/useAuth";
 import { getUserByEmail } from "../../services/userService";
@@ -14,8 +14,10 @@ import MultipleSelectChip from "../../components/MultipleSelectChip";
 import { getDataFonts } from "../../services/dataFontService";
 import { createRelationDataFontDataset, getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
 import GenericTable from "../../components/GenericTable";
-import { createVersion, getVersionByDatasetId } from "../../services/versionsService";
+import { createVersion, downloadVersionFile, getVersionByDatasetId } from "../../services/versionsService";
 import { ConfirmModal } from "../../components/Modal";
+import { createAccessLog } from "../../services/accessLogService";
+import DownloadIcon from '@mui/icons-material/Download';
 
 export function DatasetView() {
     const { id } = useParams();
@@ -58,7 +60,9 @@ export function DatasetView() {
                 setDatasetUpdates(responseDataset);
                 setUser(responseUser);
                 setDataFont(responseDataFont);
-                setVersionsList(responseVersions);
+                setVersionsList(responseVersions.sort((a, b) => {
+                    return String(b.numVersion).localeCompare(String(a.numVersion), undefined, {numeric: true})
+                }));
 
                 const responseDataFontDataset = await getDataFontsDatasetByDataset(responseDataset.id);
                 const idsFontes = responseDataFontDataset.map((relacao) => relacao.dataFontId);
@@ -86,7 +90,16 @@ export function DatasetView() {
             formData.append("archivePath", selectedFile);
             
             const newVersion: Version = await createVersion(formData);
-            
+            if (newVersion !== null && loggedUser?.sub !== undefined && dataset?.id !== undefined) {
+                const accessLog: AccessLogPost = {
+                    operationType: 1,
+                    dateTime: new Date,
+                    userCPF: loggedUser?.sub,
+                    datasetID: dataset?.id
+                }
+
+                await createAccessLog(accessLog)
+            }
             setVersionsList((prev) => [newVersion, ...prev]);
             
             setSelectedFile(null);
@@ -128,6 +141,35 @@ export function DatasetView() {
     const handleCloseVersionModal = () => {
         setModalStatusVersion(false);
     }
+
+    const handleDownload = async (versionId: number, numVersion: String) => {
+        try {
+              const blob = await downloadVersionFile(versionId);
+              if (blob !== null && loggedUser?.sub !== undefined && id !== undefined) {
+                const accessLog: AccessLogPost = {
+                  operationType: 0,
+                  dateTime: new Date(),
+                  userCPF: loggedUser?.sub,
+                  datasetID: parseInt(id)
+                };
+                await createAccessLog(accessLog);
+              }
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              
+              link.setAttribute('download', `versao_${numVersion}.csv`); 
+              
+              document.body.appendChild(link);
+              link.click();
+              
+              link.remove();
+              window.URL.revokeObjectURL(url);
+          } catch (error) {
+              console.error("Erro ao baixar o arquivo", error);
+              alert("Não foi possível baixar o arquivo. Verifique o console.");
+          }
+      };
 
     return (
         <>
@@ -201,6 +243,10 @@ export function DatasetView() {
                                         <Box>
                                             <Typography>Tamanho Total</Typography>
                                             <Typography>{ versionsList ? (versionsList.reduce((acumulator, version) => acumulator + version.size, 0) / 1024).toFixed(2) + " MB" : "Não determinado!" }</Typography>
+                                        </Box>
+                                        <Box sx={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
+                                            <Typography>Baixe a última versão</Typography>
+                                            <Button onClick={() => handleDownload(versionsList[0].id, versionsList[0].numVersion)}><DownloadIcon /></Button>
                                         </Box>
                                     </Box>
                                 </Container>

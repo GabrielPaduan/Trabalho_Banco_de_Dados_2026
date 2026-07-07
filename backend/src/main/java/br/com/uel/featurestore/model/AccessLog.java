@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class AccessLog {
     private Integer id;
-    private Integer operationType; // 0 - Download | 1 - Upload
+    private Integer operationType; // 0 - Download | 1 - Upload (or Create) | 2 - Access
     private LocalDateTime dateTime; 
     private String userCPF;
     private Integer datasetID;

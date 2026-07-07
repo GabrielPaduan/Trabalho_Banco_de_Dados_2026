@@ -30,8 +30,22 @@ export function DatasetCards() {
 
     const navigate = useNavigate();
 
-    const handleNavigate = (id: number) => {
-        navigate(`/dataset/${id.toString()}`);
+    const handleNavigate = async (id: number) => {
+        try {
+            if (loggedUser?.sub !== undefined) {
+                const accessLog: AccessLogPost = {
+                    operationType: 2,
+                    dateTime: new Date(),
+                    userCPF: loggedUser?.sub,
+                    datasetID: id
+                };
+                await createAccessLog(accessLog);
+                navigate(`/dataset/${id.toString()}`);
+            }
+        } catch (err: any) {
+
+        } 
+        
     }
 
     const handleOpenCreateModal = () => {
