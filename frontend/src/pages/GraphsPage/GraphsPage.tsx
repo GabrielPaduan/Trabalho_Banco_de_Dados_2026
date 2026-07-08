@@ -181,7 +181,7 @@ export function GraphsPage() {
                         </TabPanel>
                         <TabPanel value={"2"}  sx={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0, p: 0, pt: 2 }} >
                             <GenericBarChart
-                                data={[...graphsDataRank].sort((a, b) => b.downloads - a.downloads).slice(0, 6)}
+                                data={[...graphsDataRank].sort((a, b) => b.downloads - a.downloads).slice(0, 5)}
                                 graphType={1}
                             />
                         </TabPanel>

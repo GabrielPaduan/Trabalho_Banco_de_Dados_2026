@@ -20,12 +20,12 @@ export default function UserLogin() {
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            login(email, password);
+            await login(email, password);
         } catch (err: any) {
             if (err.response && err.response.data) {
                 setError(err.response.data);
             } else {
-                setError("Erro na conexão com o servidor!");
+                setError("Erro ao processar login!");
             }
         }
     }

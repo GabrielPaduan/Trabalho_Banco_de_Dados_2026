@@ -100,7 +100,7 @@ public class UserController {
         } catch(NoSuchElementException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erro ao processar o Login!");
+            return ResponseEntity.internalServerError().body("Erro ao processar o Login!" + e.getMessage());
         }
     }
 }
