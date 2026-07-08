@@ -13,7 +13,7 @@ import GenericForm from "../../components/GenericForm";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 import { getDataFonts } from "../../services/dataFontService";
 import { createRelationDataFontDataset, getDataFontsDatasetByDataset } from "../../services/dataFontDatasetService";
-import GenericTable from "../../components/GenericTable";
+import GenericTable from "../../components/VersionTable";
 import { createVersion, downloadVersionFile, getVersionByDatasetId } from "../../services/versionsService";
 import { ConfirmModal } from "../../components/Modal";
 import { createAccessLog } from "../../services/accessLogService";
@@ -246,7 +246,7 @@ export function DatasetView() {
                                         </Box>
                                         <Box sx={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
                                             <Typography>Baixe a última versão</Typography>
-                                            <Button onClick={() => handleDownload(versionsList[0].id, versionsList[0].numVersion)}><DownloadIcon /></Button>
+                                            <Button onClick={() => versionsList.length > 0 ? handleDownload(versionsList[0].id, versionsList[0].numVersion) : alert("Crie uma versão primeiro!")}><DownloadIcon /></Button>
                                         </Box>
                                     </Box>
                                 </Container>

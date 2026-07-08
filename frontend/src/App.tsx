@@ -1,12 +1,17 @@
 import { BrowserRouter } from "react-router-dom"
 import { AppRoutes } from "./routes"
-import { CssBaseline } from "@mui/material"
+import { CssBaseline, GlobalStyles } from "@mui/material"
 import { AuthProvider } from "./contexts/AuthContext"
 
 function App() {
   return (
     <BrowserRouter>
-      <CssBaseline />
+      <CssBaseline/>
+      <GlobalStyles 
+        styles={{ 
+          '[hidden]': { display: 'none !important' } 
+        }} 
+      />
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>

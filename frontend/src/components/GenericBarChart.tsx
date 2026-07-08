@@ -1,38 +1,78 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
-import type { GenericGraphData } from '../util/DTO';
 
-interface GraphProps {
-  data: GenericGraphData[];
+interface GraphProps<T> {
+  data: T[];
   graphType: number;
 }
 
-// #endregion
-export default function GenericBarChart({data, graphType}: GraphProps) {
+export default function GenericBarChart<T>({ data, graphType }: GraphProps<T>) {
   return (
-    <BarChart
-      style={{ width: '100%', maxWidth: '100%', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      data={data}
-      margin={{
-        top: 5,
-        right: 0,
-        left: 0,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" tick={{ fontSize: "16px"}} />
-      <YAxis dataKey="access" width="auto" />
-      <Tooltip />
-      <Legend />
-      {
-        graphType == 0 && (
-          <Bar dataKey="access" fill="#82ca9d" activeBar={{ fill: '#82ca9d', stroke: '#8884d8' }} />
-        ) 
-      }
-      <Bar dataKey="downloads" fill="#8884d8" activeBar={{ fill: '#8884d8', stroke: '#82ca9d' }} />
-      <RechartsDevtools />
-    </BarChart>
+    <ResponsiveContainer width="100%" height={"100%"}>
+      <BarChart
+        data={data}
+        margin={{
+          top: 20,
+          right: 30,
+          left: 0,
+          bottom: 60, // Aumentamos o bottom para caber os textos inclinados do eixo X
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
+        
+        <XAxis 
+          dataKey="name" 
+          tick={{ fontSize: 13, fill: '#666' }} // Fonte um pouco menor
+          angle={graphType === 0 ? -45 : 0}
+          textAnchor={graphType === 0 ? "end" : "middle"}
+          interval={0} 
+        />
+        
+        <YAxis 
+          dataKey={graphType === 0 ? "access" : "downloads"} 
+          tick={{ fontSize: 13, fill: '#666' }}
+          axisLine={false} 
+          tickLine={false} 
+        />
+        
+        <Tooltip 
+          cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }} 
+          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+        />
+        
+        <Legend wrapperStyle={{ paddingTop: '10px' }} />
+        
+        {graphType === 0 && (
+          <Bar 
+            dataKey="access" 
+            name="Acessos"
+            fill="#82ca9d" 
+            radius={[4, 4, 0, 0]}
+            maxBarSize={60} 
+            activeBar={{ fill: '#62a87d' }} 
+          />
+        )}
+        
+        <Bar 
+          dataKey="downloads" 
+          name="Downloads"
+          fill="#8884d8" 
+          radius={[4, 4, 0, 0]} 
+          maxBarSize={60}
+          activeBar={{ fill: '#6b66ba' }} 
+        />
+        
+        <RechartsDevtools />
+      </BarChart>
+    </ResponsiveContainer>
   );
-};
+}

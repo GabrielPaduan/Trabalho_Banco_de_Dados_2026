@@ -18,7 +18,7 @@ interface GenericTableProps {
   listVersion: Version[]
 }
 
-export default function GenericTable(
+export default function VersionTable(
   {listVersion} : GenericTableProps
 ) {
   const navigate = useNavigate();

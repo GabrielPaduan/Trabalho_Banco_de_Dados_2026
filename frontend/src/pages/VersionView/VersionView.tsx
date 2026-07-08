@@ -2,8 +2,8 @@ import { Box, Button, Container, Grid, Icon, Tab, TextField, Typography } from "
 import { DefaultHeader } from "../../components/DefaultHeader";
 import { SideMenu } from "../../components/SideMenu";
 import { ConfirmModal } from "../../components/Modal";
-import type { Dataset, Feature, FeaturePost, User, Version } from "../../util/DTO";
-import { useNavigate, useParams } from "react-router-dom";
+import type { AccessLogPost, Dataset, Feature, FeaturePost, User, Version } from "../../util/DTO";
+import { data, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { downloadVersionFile, getVersionById } from "../../services/versionsService";
@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import DownloadIcon from '@mui/icons-material/Download';
 import { createFeature, getFeaturesByVersionId, updateFeature } from "../../services/FeatureService";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { createAccessLog } from "../../services/accessLogService";
 
 export function VersionView() {
     const { id } = useParams();
@@ -79,7 +80,15 @@ export function VersionView() {
     const handleDownload = async (versionId: number, numVersion: string) => {
         try {
             const blob = await downloadVersionFile(versionId);
-
+             if (blob !== null && loggedUser?.sub !== undefined && dataset?.id !== undefined) {
+                const accessLog: AccessLogPost = {
+                    operationType: 0,
+                    dateTime: new Date(),
+                    userCPF: loggedUser?.sub,
+                    datasetID: dataset?.id
+                };
+                await createAccessLog(accessLog);
+            }
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
