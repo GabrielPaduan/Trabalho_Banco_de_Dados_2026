@@ -23,7 +23,7 @@ export default function UserLogin() {
             await login(email, password);
         } catch (err: any) {
             if (err.response && err.response.data) {
-                setError(err.response.data);
+                setError(err.response.data);  
             } else {
                 setError("Erro ao processar login!");
             }
