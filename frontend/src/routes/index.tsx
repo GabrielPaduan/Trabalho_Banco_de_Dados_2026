@@ -6,6 +6,7 @@ import { Dashboard } from "../pages/Dashboard/Dashboard"
 import { UpdateUser } from "../pages/UpdateUser/UpdateUser"
 import { DatasetView } from "../pages/DatasetView/DatasetView"
 import { VersionView } from "../pages/VersionView/VersionView"
+import { GraphsPage } from "../pages/GraphsPage/GraphsPage"
 
 export const AppRoutes = () => {
     return (
@@ -18,6 +19,7 @@ export const AppRoutes = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dataset/:id" element={<DatasetView />} />
                 <Route path="/version/:id" element={<VersionView />} />
+                <Route path="/graphs" element={<GraphsPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/login"/>} />

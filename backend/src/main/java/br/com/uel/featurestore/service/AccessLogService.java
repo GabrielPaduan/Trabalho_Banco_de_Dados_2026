@@ -2,6 +2,7 @@ package br.com.uel.featurestore.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,14 @@ public class AccessLogService {
 
     public AccessLog findById(Integer id) {
         return accessLogDAO.findById(id);
+    }
+
+    public List<AccessLog> findByUser(String userId) {
+        User userData = userService.getUserByEmail(userId);
+        if (userData == null) {
+            throw new NoSuchElementException("Usuário não encontrado ou usuário não registrou nenhum log.");
+        }
+        return accessLogDAO.findByUser(userData.getCpf());
     }
 
     public List<AccessLog> findAll() {

@@ -23,7 +23,7 @@ export function SideMenu() {
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ ":hover": {backgroundColor: "lightgray"} }}>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("/graphs")}>
                     <ListItemIcon>
                         <AssessmentIcon color="primary" />
                     </ListItemIcon>

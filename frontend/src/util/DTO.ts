@@ -61,3 +61,11 @@ export interface AccessLog {
 }
 
 export type AccessLogPost = Omit<AccessLog, 'id'>
+
+export interface GenericGraphData {
+    name: String, // dataset name or month
+    access: number,
+    downloads: number
+}
+
+export type GenericGraphDataDatasetRank = Omit<GenericGraphData, 'access'>

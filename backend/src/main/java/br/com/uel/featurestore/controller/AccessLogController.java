@@ -1,6 +1,7 @@
 package br.com.uel.featurestore.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,16 @@ public class AccessLogController {
         try {
             AccessLog log = accessLogService.findById(id);
             return ResponseEntity.ok(log);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } 
+    }
+
+    @GetMapping("dataset/{userId}")
+    public ResponseEntity<?> findByDatasetId(@PathVariable String userId) {
+        try {
+            List<AccessLog> logs = accessLogService.findByUser(userId);
+            return ResponseEntity.ok(logs);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         } 

@@ -10,6 +10,11 @@ export const getAccessLogById = async (id: number): Promise<AccessLog> => {
     return response.data;
 };
 
+export const getAccessLogByDatasetId = async (userId: String): Promise<AccessLog[]> => {
+    const response = await api.get<AccessLog[]>(`/logsAcesso/dataset/${userId}`);
+    return response.data
+}
+
 export const getAllAccessLogs = async (): Promise<AccessLog[]> => {
     const response = await api.get<AccessLog[]>("/logsAcesso");
     return response.data;
