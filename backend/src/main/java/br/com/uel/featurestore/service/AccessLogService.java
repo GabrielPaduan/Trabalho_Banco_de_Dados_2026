@@ -3,6 +3,7 @@ package br.com.uel.featurestore.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,18 @@ public class AccessLogService {
         if (accessLog.getDateTime() == null) {
             accessLog.setDateTime(LocalDateTime.now());
         }
+
+        long randomDaysToSubtract = ThreadLocalRandom.current().nextLong(365);
+        long randomHoursToSubtract = ThreadLocalRandom.current().nextLong(24);
+        long randomMinutesToSubtract = ThreadLocalRandom.current().nextLong(60);
+
+        LocalDateTime randomDateTime = LocalDateTime.now()
+                .minusDays(randomDaysToSubtract)
+                .minusHours(randomHoursToSubtract)
+                .minusMinutes(randomMinutesToSubtract);
+
+        accessLog.setDateTime(randomDateTime);
+
         User user = userService.getUserByEmail(accessLog.getUserCPF());
         accessLog.setUserCPF(user.getCpf());
 

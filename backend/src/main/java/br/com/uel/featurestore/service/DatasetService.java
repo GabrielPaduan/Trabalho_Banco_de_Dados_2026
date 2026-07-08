@@ -67,6 +67,20 @@ public class DatasetService {
         }
     }
 
+    public Dataset listDatasetChildById(Integer id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("O atributo nome não pode estar vazio!");
+        }
+
+        Dataset dataset = datasetDao.getDatasetById(id, true);
+
+        if (dataset == null) {
+            throw new NoSuchElementException("O nome do dataset não foi encontrado!");
+        } else {
+            return dataset;
+        }
+    }
+
     public List<Dataset> listDatasets(String userEmail) {
         if (userEmail == null && userEmail.trim().isEmpty()) {
             throw new IllegalArgumentException("O email não pode estar vazio!");
